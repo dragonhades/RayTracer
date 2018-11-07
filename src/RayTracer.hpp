@@ -12,7 +12,7 @@
 
 #define NUM_THREADS 8
 
-// #define MTHREAD
+#define MTHREAD
 #define SSAA
 #define PRINT_PROGRESS
 // #define DRAW_BBOX
