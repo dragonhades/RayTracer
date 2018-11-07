@@ -130,14 +130,9 @@ void Render(
 			color_chart[y][x] = Render_Pixel(x, y, w, h, root, eye, view, up, fovy, ambient, lights);
 
 #ifdef PRINT_PROGRESS
-			// Only print when progress percentage changes
-			int old_percent = int(progress / float(w*h) *100.0f);
 			progress ++;
 			int new_percent = int(progress / float(w*h) *100.0f);
-
-			if(old_percent != new_percent){
-				cout << "[               " << new_percent << " %               ]\r";
-			}
+			cout << "[               " << new_percent << " %               ]\r";
 #endif
 		}
 	}
@@ -232,15 +227,10 @@ void Render_Thread(
 		/* xxxxxxxxxxxxxxxxxxxxx Critical section begin xxxxxxxxxxxxxxxxxxxxx */
 	#ifdef PRINT_PROGRESS
 		std::lock_guard<std::mutex> progressBar_lck (progress_mutx);
-
-			// Only print when progress percentage changes
-			int old_percent = int(progress / float(w*h) *100.0f);;
+		
 			progress ++;
 			int new_percent = int(progress / float(w*h) *100.0f);
-
-			if(old_percent != new_percent){
-				cout << "[               " << new_percent << " %               ]\r";
-			}
+			cout << "[               " << new_percent << " %               ]\r";
 	#endif
 		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */
 
