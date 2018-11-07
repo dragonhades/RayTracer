@@ -127,7 +127,7 @@ void Render(
 	for(register int y=0; y < h; ++y){
 		for(register int x=0; x < w; ++x){
 			
-			color_chart[y][x] = Render_Pixel(x, y, w, h, root, eye, view, up, fovy, ambient, lights);
+			color_chart[y][x] = Render_Pixel(x, y, w, h, root, fovy, ambient, lights);
 
 #ifdef PRINT_PROGRESS
 			progress ++;
@@ -221,18 +221,21 @@ void Render_Thread(
 		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */
 
 
-		vec3 color = Render_Pixel(x, y, w, h, root, eye, view, up, fovy, ambient, lights);
+		const vec3 & color = Render_Pixel(x, y, w, h, root, fovy, ambient, lights);
 		color_chart[y][x] = color;
 
+		int new_percent;
 		/* xxxxxxxxxxxxxxxxxxxxx Critical section begin xxxxxxxxxxxxxxxxxxxxx */
 	#ifdef PRINT_PROGRESS
 		std::lock_guard<std::mutex> progressBar_lck (progress_mutx);
 		
 			progress ++;
-			int new_percent = int(progress / float(w*h) *100.0f);
-			cout << "[               " << new_percent << " %               ]\r";
+			new_percent = int(progress / float(w*h) *100.0f);
 	#endif
 		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */
+
+		// This has potential sychornization problem, but it's okay; we just want to see percentage going up... 
+		cout << "[               " << new_percent << " %               ]\r";
 
 	} // while true
 }

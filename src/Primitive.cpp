@@ -236,7 +236,7 @@ CastResult NonhierBox::intersect(const Ray & ray) {
 	return result;
 }
 
-CastResult CastResult::transform() {
+CastResult CastResult::transform() const {
 	CastResult newResult(*this);
 	
 	glm::mat4 trans = parentTrans * geoNode->get_transform();

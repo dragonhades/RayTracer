@@ -27,9 +27,9 @@ struct CastResult {
   glm::vec3 pos;
   glm::mat4 parentTrans;
 
-  CastResult transform();
+  CastResult transform() const ;
 
-  bool isHit() { return type != HitType::None; }
+  bool isHit() const { return type != HitType::None; }
 };
 
 enum class PrimitiveType {

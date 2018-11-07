@@ -52,7 +52,7 @@ CastResult intersectScene(const SceneNode* node,
 	if(node->m_nodeType == NodeType::GeometryNode)
 	{
 		GeometryNode* gnode = (GeometryNode*) node;
-		mat4 invT = gnode->get_inverse() * invtrans;
+		const mat4 & invT = gnode->get_inverse() * invtrans;
 
 		Ray ray_copy = ray;
 		ray_copy.setTransform(invT);
@@ -78,7 +78,7 @@ CastResult intersectScene(const SceneNode* node,
 	}
 _NO_HIT_:
 	for (SceneNode* child : node->children){
-		CastResult result = 
+		const CastResult & result = 
 			intersectScene(child, ray, node->get_inverse()*invtrans, trans*node->get_transform());
 		if(result.isHit() && result.t < t_min) {
 			t_min = result.t;
@@ -99,10 +99,7 @@ glm::vec3 Render_Pixel(
 		// What to render  
 		const SceneNode * root,
 
-		// Viewing parameters  
-		const glm::vec3 & eye,
-		const glm::vec3 & view,
-		const glm::vec3 & up,
+		// Viewing parameters
 		double fovy,
 
 		// Lighting parameters  
@@ -116,9 +113,25 @@ glm::vec3 Render_Pixel(
 #else
 	Ray ray = getPrimaryRay(x+0.5f, y+0.5f, w, h, fovy, -nearPlane);
 #endif	
+   
+    return shading(ray, 1, root, ambient, lights);
+}
+
+// http://web.cse.ohio-state.edu/~shen.94/681/Site/Slides_files/reflection_refraction.pdf
+glm::vec3 shading(
+		const Ray & ray, 
+		const int recursionDepth,
+
+		// What to render  
+		const SceneNode * root,
+
+		// Lighting parameters  
+		const glm::vec3 & ambient,
+		const std::list<Light *> & lights
+) {
 
 	/** intersect(scene, ray) **/
-	CastResult result = intersectScene(root, ray);
+	const CastResult & result = intersectScene(root, ray);
 
 	if(result.isHit()){
 
@@ -128,7 +141,7 @@ glm::vec3 Render_Pixel(
 
 		DASSERT(result.geoNode != nullptr, "null");
 
-		CastResult result_Worldsp = result.transform();
+		const CastResult & result_Worldsp = result.transform();
 
 		/** Phong illumination **/
 		PhongMaterial* phong = (PhongMaterial*) gnode->m_material;
@@ -142,11 +155,9 @@ glm::vec3 Render_Pixel(
 		const vec3 & v = -ray.dir;
 
 		// ambient = Kd * Ia
-		vec3 sum = ambient*kd;
+		vec3 color = ambient*kd;
 
-
-	#define USE_LIGHT_FRONT
-	#define USE_LIGHT_BACK
+//--------------------------  Lighting  -----------------------------//
  
 	#if defined USE_LIGHT_FRONT && defined USE_LIGHT_BACK
 		for(Light* l : lights)
@@ -163,34 +174,44 @@ glm::vec3 Render_Pixel(
 
 
 		{
-			const float distance = glm::distance(l->position, intersection);
+			const float & distance = glm::distance(l->position, intersection);
 			const vec3 & I = l->colour 
 				/ (l->falloff[0] + l->falloff[1]*distance + l->falloff[2]*distance*distance);
 
-			const vec3 dir = glm::normalize(l->position - intersection);
+			const vec3 & light_dir = glm::normalize(l->position - intersection);
 
-			const vec3 r = -glm::reflect(dir, n);
-			const vec3 h = (v + dir) / absVec3(v + dir);
+			const vec3 & r = -glm::reflect(light_dir, n);
+			// const vec3 & h = (v + light_dir) / absVec3(v + light_dir);
 
-			Ray shadowRay(intersection, dir);
-			CastResult shadowRay_result = intersectScene(root, shadowRay);
+			Ray shadowRay(intersection, light_dir);
+			const CastResult & shadowRay_result = intersectScene(root, shadowRay);
 
 			if(shadowRay_result.isHit()) continue;	// discard;
 
-			sum += kd*I*std::max(float(0), glm::dot(dir, n))
+			color += kd*I*std::max(float(0), glm::dot(light_dir, n))
 					+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
 					// + ks*std::pow(glm::dot(h, n), p)*I;
 
 		} // for lights
-
-		
+//--------------------------  Lighting  -----------------------------//
 _SKIP_LIGHTING_:
-		return sum;
+
+#ifdef REFLECTION
+		if(recursionDepth < MAX_SHADE_RECURSION){
+			// if(shiny)
+			const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n));
+			const vec3 & reflect_color = 
+				0.5 * shading(ray_reflection, recursionDepth + 1, root, ambient, lights);
+			color += reflect_color;
+		}
+
+#endif		
+		return color;
 
 	} else {	// if not hit
 
-		// background shading color
-		vec3 color(y / float(h), y*0.1 / float(h), y*0.4 / float(h));
-		return color;
+		// background color
+		// vec3 color(y / float(h), y*0.1 / float(h), y*0.4 / float(h));
+		return vec3(0, 0, 0);
 	}
 }
