@@ -9,6 +9,7 @@ build/
 
 # lib
 lib/
+shared/
 
 # Makefile
 Makefile
