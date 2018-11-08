@@ -114,7 +114,11 @@ glm::vec3 Render_Pixel(
 	Ray ray = getPrimaryRay(x+0.5f, y+0.5f, w, h, fovy, -nearPlane);
 #endif	
    
-    return shading(ray, 1, root, ambient, lights);
+    vec3 color = shading(ray, 1, root, ambient, lights);
+    if(color == vec3(0)){
+		color = vec3(y / float(h), y*0.1 / float(h), y*0.4 / float(h));
+    }
+    return color;
 }
 
 // http://web.cse.ohio-state.edu/~shen.94/681/Site/Slides_files/reflection_refraction.pdf
@@ -201,7 +205,7 @@ _SKIP_LIGHTING_:
 			// if(shiny)
 			const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n));
 			const vec3 & reflect_color = 
-				0.5 * shading(ray_reflection, recursionDepth + 1, root, ambient, lights);
+				0.3 * shading(ray_reflection, recursionDepth + 1, root, ambient, lights);
 			color += reflect_color;
 		}
 
