@@ -5,9 +5,9 @@
 -- We'll need an extra function that knows how to read Wavefront .OBJ
 -- files.
 
-stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0)
-grass = gr.material({0.1, 0.7, 0.1}, {0.0, 0.0, 0.0}, 0)
-hide = gr.material({0.84, 0.6, 0.53}, {0.3, 0.3, 0.3}, 20)
+stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0, 1)
+grass = gr.material({0.1, 0.7, 0.1}, {0.0, 0.0, 0.0}, 0, 1)
+hide = gr.material({0.84, 0.6, 0.53}, {0.3, 0.3, 0.3}, 20, 1)
 
 -- ##############################################
 -- the arch

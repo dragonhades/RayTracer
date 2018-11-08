@@ -8,8 +8,6 @@
 #include "Light.hpp"
 #include "Image.hpp"
 
-#define PI 3.1415926
-
 #define NUM_THREADS 8
 #define MTHREAD
 #define PRINT_PROGRESS
@@ -17,12 +15,11 @@
 #define SSAA
 #define REFLECTION
 #define REFRACTION
-#define MAX_SHADE_RECURSION 4
+#define MAX_SHADE_RECURSION 5
 
 // #define DRAW_BBOX
 #define USE_LIGHT_FRONT
-#define USE_LIGHT_BACK
-
+#define USE_LIGHT_BACK 4
 class Ray;
 class CastResult;
 

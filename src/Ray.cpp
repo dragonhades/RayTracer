@@ -20,6 +20,7 @@ void Ray::setTransform(const glm::mat4& trans){
   dir = glm::vec3(trans * glm::vec4(point2, 1)) - org;
 }
 
+
 std::ostream& operator<<(std::ostream& out, const Ray& r)
 {
   out << "R[" << glm::to_string(r.org) 

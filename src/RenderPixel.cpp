@@ -6,6 +6,7 @@
 #include <numeric>
 #include <thread>
 #include <mutex>
+#include <utility>
 
 #include "RayTracer.hpp"
 #include "Ray.hpp"
@@ -15,18 +16,13 @@
 #include "PhongMaterial.hpp"
 #include "Primitive.hpp"
 #include "Mesh.hpp"
+#include "Math.hpp"
 
 using namespace glm;
 using namespace std;
 
 const uint nearPlane = 6;
 const uint farPlane = 20;
-
-float absVec3(const vec3 & vec){
-	float value = 0.0;
-	for(int i = 0; i < 3; i++) value += vec[i] * vec[i];
-	return sqrt(value);
-}
 
 Ray getPrimaryRay(const float x, const float y, const int width, const int height, 
 	const int fov, const int z_near) {
@@ -40,10 +36,8 @@ Ray getPrimaryRay(const float x, const float y, const int width, const int heigh
     return Ray(vec3(0), glm::normalize(P));
 }
 
-
 CastResult intersectSceneRecurse(const SceneNode* node, 
 						  const Ray & ray, 
-						  const mat4 invtrans=mat4(), 
 						  const mat4 trans=mat4() ) 
 {
 	double t_min = INT_MAX;
@@ -52,10 +46,9 @@ CastResult intersectSceneRecurse(const SceneNode* node,
 	if(node->m_nodeType == NodeType::GeometryNode)
 	{
 		GeometryNode* gnode = (GeometryNode*) node;
-		const mat4 & invT = gnode->get_inverse() * invtrans;
 
 		Ray ray_copy = ray;
-		ray_copy.setTransform(invT);
+		ray_copy.setTransform(inverse(trans*gnode->get_transform()));
 		CastResult result = gnode->m_primitive->intersect(ray_copy);
 
 		if(result.isHit()){
@@ -79,7 +72,7 @@ CastResult intersectSceneRecurse(const SceneNode* node,
 _NO_HIT_:
 	for (SceneNode* child : node->children){
 		const CastResult & result = 
-			intersectSceneRecurse(child, ray, node->get_inverse()*invtrans, trans*node->get_transform());
+			intersectSceneRecurse(child, ray, trans*node->get_transform());
 		if(result.isHit() && result.t < t_min) {
 			t_min = result.t;
 			result_min = result;
@@ -92,7 +85,7 @@ _NO_HIT_:
 CastResult intersectScene(const SceneNode* node, 
 						  const Ray & ray
 ){
-	const CastResult & result = intersectSceneRecurse(node, ray, mat4(), mat4());
+	const CastResult & result = intersectSceneRecurse(node, ray, mat4());
 	if(result.isHit()){
 		return result.transform();
 	} else {
@@ -189,9 +182,9 @@ glm::vec3 shading(
 
 
 		{
-			const float & distance = glm::distance(l->position, intersection);
+			const float & light_distance = glm::distance(l->position, intersection);
 			const vec3 & I = l->colour 
-				/ (l->falloff[0] + l->falloff[1]*distance + l->falloff[2]*distance*distance);
+				/ (l->falloff[0] + l->falloff[1]*light_distance + l->falloff[2]*light_distance*light_distance);
 
 			const vec3 & light_dir = glm::normalize(l->position - intersection);
 
@@ -201,8 +194,12 @@ glm::vec3 shading(
 			Ray shadowRay(intersection, light_dir);
 			const CastResult & shadowRay_result = intersectScene(root, shadowRay);
 
-			// if(shadowRay_result.isHit()) continue;	// discard;
+			vec3 color_self;
 
+			if(shadowRay_result.isHit()) continue;	// discard;
+			color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
+						+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
+						// + ks*std::pow(glm::dot(h, n), p)*I;
 
 		// TODO 
 
@@ -210,18 +207,19 @@ glm::vec3 shading(
 			// Get rid of it
 
 
-			vec3 color_self;
-			if(shadowRay_result.isHit()) {
-				PhongMaterial* material = (PhongMaterial*) shadowRay_result.geoNode->m_material;
-				if(material->m_opacity != 1){
-					color_self = 0.5*ks*shading(Ray(shadowRay_result.intersection + shadowRay.dir, shadowRay.dir), 
-						1, x, y, w, h,root, ambient, lights);
-				}
-			} else {
-				color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
-						+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
-						// + ks*std::pow(glm::dot(h, n), p)*I;
-			}
+			// if(shadowRay_result.isHit() && 
+			// 	glm::distance(shadowRay_result.intersection, intersection) <= light_distance)
+			// {
+			// 	PhongMaterial* material = (PhongMaterial*) shadowRay_result.geoNode->m_material;
+			// 	if(material->m_opacity != 1){
+			// 		color_self = 0.5*ks*shading(Ray(shadowRay_result.intersection, shadowRay.dir), 
+			// 			1, x, y, w, h,root, ambient, lights);
+			// 	}
+			// } else {
+			// 	color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
+			// 			+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
+			// 			// + ks*std::pow(glm::dot(h, n), p)*I;
+			// }
 
 #ifdef REFRACTION
 			color += opacity*color_self;
@@ -232,32 +230,46 @@ glm::vec3 shading(
 //--------------------------  Lighting  -----------------------------//
 _SKIP_LIGHTING_:
 
-#ifdef REFLECTION
 		if(recursionDepth < MAX_SHADE_RECURSION){
+#ifdef REFLECTION
 			// if(shiny)
 			const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n));
 			const vec3 & reflect_color = 
 				0.5 * ks * shading(ray_reflection, recursionDepth + 1, x, y, w, h,root, ambient, lights);
 			color += reflect_color;
 
- #ifdef REFRACTION
+  #ifdef REFRACTION
 			if(opacity != 1){
-				const Ray & ray_transmition = Ray(intersection, ray.dir);
-				const vec3 & refract_color = 
-					shading(ray_transmition, recursionDepth + 1, x, y, w, h,root, ambient, lights);
+				/*
+					Air 1.0
+					Glass 1.55
+					Water 1.33
+					Diamond 2.42 
+				*/
+				double startRefractiveIndex = 1.0;
+				double endRefractiveIndex = 1.55;
+				
+				const vec3 & refract_dir = get_refract(n, ray.dir, startRefractiveIndex, endRefractiveIndex);
+				// const Ray & ray_transmition = Ray(intersection, ray.dir);
+				const Ray & ray_transmition = Ray(intersection, refract_dir);
+				const vec3 & refract_color = 0.8 * ks*
+					shading(ray_transmition, recursionDepth + 1, x, y, w, h, root, ambient, lights);
+				// DPRINTVEC(refract_color);
 				color += (1.0-opacity)*refract_color;
 			}
 		
- #endif	
+  #endif	
+#endif
 		}
 
-#endif
 		return color;
 
 	} else {	// if not hit
 
 		// background color
-		// return vec3(0.0*y / float(h), y*0.1 / float(h), y*0.4 / float(h));
-		return vec3(0);
+		// return vec3(0.0*y / float(h), y*0.1 / float(h), y*0.4 / float(h));	// blue shading
+		return vec3(y / float(h), y*0.1 / float(h), y*0.3 / float(h));	// red shading
+
+		// return vec3(0);
 	}
 }
