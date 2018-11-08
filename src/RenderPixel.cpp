@@ -206,7 +206,7 @@ _SKIP_LIGHTING_:
 			// if(shiny)
 			const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n));
 			const vec3 & reflect_color = 
-				0.3 * shading(ray_reflection, recursionDepth + 1, root, ambient, lights);
+				0.5 * ks * shading(ray_reflection, recursionDepth + 1, root, ambient, lights);
 			color += reflect_color;
 		}
 
