@@ -27,7 +27,7 @@ struct CastResult {
   glm::vec3 pos;
   glm::mat4 parentTrans;
 
-  CastResult transform() const ;
+  void transform();
 
   bool isHit() const { return type != HitType::None; }
 };

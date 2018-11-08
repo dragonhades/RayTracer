@@ -7,9 +7,10 @@
 #include "Ray.hpp"
 #include "DEBUG.hpp"
 
-Ray::Ray(const glm::vec3 &org, const glm::vec3 &dir)
+Ray::Ray(const glm::vec3 &org, const glm::vec3 &dir, bool is_inside)
   : org(org),
-    dir(dir)
+    dir(dir),
+    inside_shape(is_inside)
 {
 }
 

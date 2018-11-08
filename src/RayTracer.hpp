@@ -82,13 +82,13 @@ glm::vec3 shading(
 		const Ray & ray, 
 		const int recursionDepth,
 
+		// What to render  
+		const SceneNode * root,
+		
 		int x, 
 		int y, 
 		int w, 
 		int h,
-
-		// What to render  
-		const SceneNode * root,
 
 		// Lighting parameters  
 		const glm::vec3 & ambient,

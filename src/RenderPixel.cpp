@@ -33,7 +33,7 @@ Ray getPrimaryRay(const float x, const float y, const int width, const int heigh
                 z_near * -(y / height - 0.5f) * side, 
                 z_near);
 
-    return Ray(vec3(0), glm::normalize(P));
+    return Ray(vec3(0), glm::normalize(P), false);
 }
 
 CastResult intersectSceneRecurse(const SceneNode* node, 
@@ -85,9 +85,11 @@ _NO_HIT_:
 CastResult intersectScene(const SceneNode* node, 
 						  const Ray & ray
 ){
-	const CastResult & result = intersectSceneRecurse(node, ray, mat4());
+	CastResult result = intersectSceneRecurse(node, ray, mat4());
 	if(result.isHit()){
-		return result.transform();
+		 result.transform();
+		 if(ray.inside_shape) result.surface_normal = -result.surface_normal;
+		 return result;
 	} else {
 		return CastResult();
 	}
@@ -118,7 +120,7 @@ glm::vec3 Render_Pixel(
 	Ray ray = getPrimaryRay(x+0.5f, y+0.5f, w, h, fovy, -nearPlane);
 #endif	
    
-    return shading(ray, 1, x, y, w, h, root, ambient, lights);
+    return shading(ray, 1, root, x, y, w, h, ambient, lights);
 }
 
 // http://web.cse.ohio-state.edu/~shen.94/681/Site/Slides_files/reflection_refraction.pdf
@@ -126,13 +128,13 @@ glm::vec3 shading(
 		const Ray & ray, 
 		const int recursionDepth,
 
+		// What to render  
+		const SceneNode * root,
+		
 		int x, 
 		int y, 
 		int w, 
 		int h,
-
-		// What to render  
-		const SceneNode * root,
 
 		// Lighting parameters  
 		const glm::vec3 & ambient,
@@ -191,7 +193,7 @@ glm::vec3 shading(
 			const vec3 & r = -glm::reflect(light_dir, n);
 			// const vec3 & h = (v + light_dir) / absVec3(v + light_dir);
 
-			Ray shadowRay(intersection, light_dir);
+			Ray shadowRay(intersection, light_dir, ray.inside_shape);
 			const CastResult & shadowRay_result = intersectScene(root, shadowRay);
 
 			vec3 color_self;
@@ -206,6 +208,9 @@ glm::vec3 shading(
 			//The intersectScene is repeated during following call...  
 			// Get rid of it
 
+		// TODO 
+
+			// seg fault
 
 			// if(shadowRay_result.isHit() && 
 			// 	glm::distance(shadowRay_result.intersection, intersection) <= light_distance)
@@ -233,9 +238,9 @@ _SKIP_LIGHTING_:
 		if(recursionDepth < MAX_SHADE_RECURSION){
 #ifdef REFLECTION
 			// if(shiny)
-			const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n));
+			const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n), ray.inside_shape);
 			const vec3 & reflect_color = 
-				0.5 * ks * shading(ray_reflection, recursionDepth + 1, x, y, w, h,root, ambient, lights);
+				0.5 * ks * shading(ray_reflection, recursionDepth + 1, root, x, y, w, h, ambient, lights);
 			color += reflect_color;
 
   #ifdef REFRACTION
@@ -246,14 +251,22 @@ _SKIP_LIGHTING_:
 					Water 1.33
 					Diamond 2.42 
 				*/
-				double startRefractiveIndex = 1.0;
-				double endRefractiveIndex = 1.55;
+
+				double startRefractiveIndex;
+				double endRefractiveIndex;
+				if(ray.inside_shape){
+					startRefractiveIndex = 1.55;
+					endRefractiveIndex = 1.00;
+				} else {
+					startRefractiveIndex = 1.00;
+					endRefractiveIndex = 1.55;
+				}
 				
 				const vec3 & refract_dir = get_refract(n, ray.dir, startRefractiveIndex, endRefractiveIndex);
 				// const Ray & ray_transmition = Ray(intersection, ray.dir);
-				const Ray & ray_transmition = Ray(intersection, refract_dir);
+				const Ray & ray_transmition = Ray(intersection, refract_dir, !ray.inside_shape);
 				const vec3 & refract_color = 0.8 * ks*
-					shading(ray_transmition, recursionDepth + 1, x, y, w, h, root, ambient, lights);
+					shading(ray_transmition, recursionDepth + 1, root, x, y, w, h, ambient, lights);
 				// DPRINTVEC(refract_color);
 				color += (1.0-opacity)*refract_color;
 			}
@@ -269,6 +282,7 @@ _SKIP_LIGHTING_:
 		// background color
 		// return vec3(0.0*y / float(h), y*0.1 / float(h), y*0.4 / float(h));	// blue shading
 		return vec3(y / float(h), y*0.1 / float(h), y*0.3 / float(h));	// red shading
+		// return vec3();
 
 		// return vec3(0);
 	}

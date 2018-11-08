@@ -8,7 +8,7 @@ glass = gr.material({0.0, 0.0, 0.0}, {0.8, 0.8, 0.8}, 50, 0.0)
 
 scene_root = gr.node('root')
 
-s1 = gr.nh_sphere('s1', {150, 0, -400}, 100)
+s1 = gr.nh_sphere('s1', {50, 0, -400}, 100)
 scene_root:add_child(s1)
 s1:set_material(mat1)
 
