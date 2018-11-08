@@ -116,6 +116,7 @@ glm::vec3 Render_Pixel(
    
     vec3 color = shading(ray, 1, root, ambient, lights);
     if(color == vec3(0)){
+		// background color
 		color = vec3(y / float(h), y*0.1 / float(h), y*0.4 / float(h));
     }
     return color;
