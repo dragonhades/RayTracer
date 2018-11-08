@@ -16,7 +16,8 @@
 
 #define SSAA
 #define REFLECTION
-#define MAX_SHADE_RECURSION 3
+#define REFRACTION
+#define MAX_SHADE_RECURSION 4
 
 // #define DRAW_BBOX
 #define USE_LIGHT_FRONT
@@ -82,6 +83,11 @@ glm::vec3 Render_Pixel(
 glm::vec3 shading(
 		const Ray & ray, 
 		const int recursionDepth,
+
+		int x, 
+		int y, 
+		int w, 
+		int h,
 
 		// What to render  
 		const SceneNode * root,

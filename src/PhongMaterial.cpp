@@ -8,7 +8,10 @@ PhongMaterial::PhongMaterial(
 	, m_ks(ks)
 	, m_shininess(shininess)
 	, m_opacity(opacity)
-{}
+{
+	if(m_opacity > 1) m_opacity = 1;
+	if(m_opacity < 0) m_opacity = 0;
+}
 
 PhongMaterial::~PhongMaterial()
 {}

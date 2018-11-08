@@ -114,18 +114,18 @@ glm::vec3 Render_Pixel(
 	Ray ray = getPrimaryRay(x+0.5f, y+0.5f, w, h, fovy, -nearPlane);
 #endif	
    
-    vec3 color = shading(ray, 1, root, ambient, lights);
-    if(color == vec3(0)){
-		// background color
-		color = vec3(y / float(h), y*0.1 / float(h), y*0.4 / float(h));
-    }
-    return color;
+    return shading(ray, 1, x, y, w, h, root, ambient, lights);
 }
 
 // http://web.cse.ohio-state.edu/~shen.94/681/Site/Slides_files/reflection_refraction.pdf
 glm::vec3 shading(
 		const Ray & ray, 
 		const int recursionDepth,
+
+		int x, 
+		int y, 
+		int w, 
+		int h,
 
 		// What to render  
 		const SceneNode * root,
@@ -153,6 +153,7 @@ glm::vec3 shading(
 		const vec3 & kd = phong->m_kd;
 		const vec3 & ks = phong->m_ks;
 		const double & p = phong->m_shininess;
+		const double & opacity = phong->m_opacity;
 
 		const vec3 & n = result_Worldsp.surface_normal;
 		const vec3 & intersection = result_Worldsp.intersection;
@@ -193,10 +194,15 @@ glm::vec3 shading(
 
 			if(shadowRay_result.isHit()) continue;	// discard;
 
-			color += kd*I*std::max(float(0), glm::dot(light_dir, n))
+			const vec3 & color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
 					+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
 					// + ks*std::pow(glm::dot(h, n), p)*I;
 
+#ifdef REFRACTION
+			color += opacity*color_self;
+#else
+			color += color_self;
+#endif
 		} // for lights
 //--------------------------  Lighting  -----------------------------//
 _SKIP_LIGHTING_:
@@ -206,17 +212,27 @@ _SKIP_LIGHTING_:
 			// if(shiny)
 			const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n));
 			const vec3 & reflect_color = 
-				0.5 * ks * shading(ray_reflection, recursionDepth + 1, root, ambient, lights);
+				0.5 * ks * shading(ray_reflection, recursionDepth + 1, x, y, w, h,root, ambient, lights);
 			color += reflect_color;
+
+ #ifdef REFRACTION
+			if(opacity != 1){
+				const Ray & ray_transmition = Ray(intersection, ray.dir);
+				const vec3 & refract_color = 
+					shading(ray_transmition, recursionDepth + 1, x, y, w, h,root, ambient, lights);
+				color += (1.0-opacity)*refract_color;
+			}
+		
+ #endif	
 		}
 
-#endif		
+#endif
 		return color;
 
 	} else {	// if not hit
 
 		// background color
-		// vec3 color(y / float(h), y*0.1 / float(h), y*0.4 / float(h));
-		return vec3(0, 0, 0);
+		// return vec3(0.0*y / float(h), y*0.1 / float(h), y*0.4 / float(h));
+		return vec3(0);
 	}
 }
