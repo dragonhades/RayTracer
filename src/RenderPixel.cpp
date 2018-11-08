@@ -41,7 +41,7 @@ Ray getPrimaryRay(const float x, const float y, const int width, const int heigh
 }
 
 
-CastResult intersectScene(const SceneNode* node, 
+CastResult intersectSceneRecurse(const SceneNode* node, 
 						  const Ray & ray, 
 						  const mat4 invtrans=mat4(), 
 						  const mat4 trans=mat4() ) 
@@ -79,7 +79,7 @@ CastResult intersectScene(const SceneNode* node,
 _NO_HIT_:
 	for (SceneNode* child : node->children){
 		const CastResult & result = 
-			intersectScene(child, ray, node->get_inverse()*invtrans, trans*node->get_transform());
+			intersectSceneRecurse(child, ray, node->get_inverse()*invtrans, trans*node->get_transform());
 		if(result.isHit() && result.t < t_min) {
 			t_min = result.t;
 			result_min = result;
@@ -87,6 +87,17 @@ _NO_HIT_:
 	}
 	if(t_min != INT_MAX) return result_min;
 	else return CastResult();
+}
+
+CastResult intersectScene(const SceneNode* node, 
+						  const Ray & ray
+){
+	const CastResult & result = intersectSceneRecurse(node, ray, mat4(), mat4());
+	if(result.isHit()){
+		return result.transform();
+	} else {
+		return CastResult();
+	}
 }
 
 
@@ -146,8 +157,6 @@ glm::vec3 shading(
 
 		DASSERT(result.geoNode != nullptr, "null");
 
-		const CastResult & result_Worldsp = result.transform();
-
 		/** Phong illumination **/
 		PhongMaterial* phong = (PhongMaterial*) gnode->m_material;
 		const vec3 & kd = phong->m_kd;
@@ -155,8 +164,8 @@ glm::vec3 shading(
 		const double & p = phong->m_shininess;
 		const double & opacity = phong->m_opacity;
 
-		const vec3 & n = result_Worldsp.surface_normal;
-		const vec3 & intersection = result_Worldsp.intersection;
+		const vec3 & n = result.surface_normal;
+		const vec3 & intersection = result.intersection;
 
 		const vec3 & v = -ray.dir;
 
@@ -192,11 +201,27 @@ glm::vec3 shading(
 			Ray shadowRay(intersection, light_dir);
 			const CastResult & shadowRay_result = intersectScene(root, shadowRay);
 
-			if(shadowRay_result.isHit()) continue;	// discard;
+			// if(shadowRay_result.isHit()) continue;	// discard;
 
-			const vec3 & color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
-					+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
-					// + ks*std::pow(glm::dot(h, n), p)*I;
+
+		// TODO 
+
+			//The intersectScene is repeated during following call...  
+			// Get rid of it
+
+
+			vec3 color_self;
+			if(shadowRay_result.isHit()) {
+				PhongMaterial* material = (PhongMaterial*) shadowRay_result.geoNode->m_material;
+				if(material->m_opacity != 1){
+					color_self = 0.5*ks*shading(Ray(shadowRay_result.intersection + shadowRay.dir, shadowRay.dir), 
+						1, x, y, w, h,root, ambient, lights);
+				}
+			} else {
+				color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
+						+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
+						// + ks*std::pow(glm::dot(h, n), p)*I;
+			}
 
 #ifdef REFRACTION
 			color += opacity*color_self;

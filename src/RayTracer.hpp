@@ -24,6 +24,7 @@
 #define USE_LIGHT_BACK
 
 class Ray;
+class CastResult;
 
 extern std::vector<std::vector<glm::vec3>> color_chart;
 
@@ -95,4 +96,8 @@ glm::vec3 shading(
 		// Lighting parameters  
 		const glm::vec3 & ambient,
 		const std::list<Light *> & lights
+);
+
+CastResult intersectScene(const SceneNode* node, 
+						  const Ray & ray
 );
