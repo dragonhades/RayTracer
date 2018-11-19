@@ -36,20 +36,19 @@ Ray getPrimaryRay(const float x, const float y, const int width, const int heigh
     return Ray(vec3(0), glm::normalize(P), false);
 }
 
-CastResult intersectSceneRecurse(const SceneNode* node, 
+CastResult intersectNode(const SceneNode* node, 
 						  const Ray & ray, 
-						  const mat4 trans=mat4() ) 
+						  const mat4 & trans) 
 {
-	double t_min = INT_MAX;
-	CastResult result_min;
-		
+	CastResult result;
+
 	if(node->m_nodeType == NodeType::GeometryNode)
 	{
 		GeometryNode* gnode = (GeometryNode*) node;
 
 		Ray ray_copy = ray;
 		ray_copy.setTransform(inverse(trans*gnode->get_transform()));
-		CastResult result = gnode->m_primitive->intersect(ray_copy);
+		result = gnode->m_primitive->intersect(ray_copy);
 
 		if(result.isHit()){
 
@@ -62,13 +61,26 @@ CastResult intersectSceneRecurse(const SceneNode* node,
 #endif
 			result.geoNode = gnode;
 			result.parentTrans = trans;
-
-			if(result.t < t_min) {
-				t_min = result.t;
-				result_min = result;
-			}
 		}
 	}
+_NO_HIT_:
+	return result;
+}
+
+CastResult intersectSceneRecurse(const SceneNode* node, 
+						  const Ray & ray, 
+						  const mat4 & trans) 
+{
+	double t_min = INT_MAX;
+	CastResult result_min;
+		
+	CastResult result = intersectNode(node, ray, trans);
+
+	if(result.isHit() && result.t < t_min) {
+		t_min = result.t;
+		result_min = result;
+	}
+
 _NO_HIT_:
 	for (SceneNode* child : node->children){
 		const CastResult & result = 
@@ -82,17 +94,39 @@ _NO_HIT_:
 	else return CastResult();
 }
 
-CastResult intersectScene(const SceneNode* node, 
-						  const Ray & ray
-){
-	CastResult result = intersectSceneRecurse(node, ray, mat4());
-	if(result.isHit()){
-		 result.transform();
-		 if(ray.inside_shape) result.surface_normal = -result.surface_normal;
-		 return result;
+CastResult intersectNodeRecurse(const SceneNode* target,
+						  const SceneNode* node,
+						  const Ray & ray, 
+						  const mat4 & trans)
+{
+	CastResult result;
+	if(target == node) {
+		result = intersectSceneRecurse(node, ray, trans);
 	} else {
-		return CastResult();
+		for(SceneNode* child : node->children){
+			result = intersectNodeRecurse(target, child, ray, trans*node->get_transform());
+			if(result.isHit()) return result;
+		}
 	}
+	return result;
+}
+
+CastResult intersectScene(const Ray & ray, 
+						const SceneNode* target=nullptr
+){
+	CastResult result;
+	if(target){
+		intersectNodeRecurse(target, root, ray, mat4());
+	} else {
+		result = intersectSceneRecurse(root, ray, mat4());
+	}
+		if(result.isHit()){
+			 result.transform();
+			 if(ray.inside_shape) result.surface_normal = -result.surface_normal;
+			 return result;
+		} else {
+			return CastResult();
+		}
 }
 
 
@@ -101,9 +135,6 @@ glm::vec3 Render_Pixel(
 		int y, 
 		int w, 
 		int h,
-
-		// What to render  
-		const SceneNode * root,
 
 		// Viewing parameters
 		double fovy,
@@ -129,7 +160,7 @@ glm::vec3 shading(
 		const int recursionDepth,
 
 		// What to render  
-		const SceneNode * root,
+		const SceneNode * node,
 		
 		int x, 
 		int y, 
@@ -142,7 +173,7 @@ glm::vec3 shading(
 ) {
 
 	/** intersect(scene, ray) **/
-	const CastResult & result = intersectScene(root, ray);
+	const CastResult & result = intersectScene(ray);
 
 	if(result.isHit()){
 
@@ -194,7 +225,7 @@ glm::vec3 shading(
 			// const vec3 & h = (v + light_dir) / absVec3(v + light_dir);
 
 			Ray shadowRay(intersection, light_dir, ray.inside_shape);
-			const CastResult & shadowRay_result = intersectScene(root, shadowRay);
+			const CastResult & shadowRay_result = intersectScene(shadowRay);
 
 			vec3 color_self;
 
@@ -237,11 +268,12 @@ _SKIP_LIGHTING_:
 
 		if(recursionDepth < MAX_SHADE_RECURSION){
 #ifdef REFLECTION
-			// if(shiny)
-			const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n), ray.inside_shape);
-			const vec3 & reflect_color = 
-				0.5 * ks * shading(ray_reflection, recursionDepth + 1, root, x, y, w, h, ambient, lights);
-			color += reflect_color;
+			// if(p>5){
+				const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n), ray.inside_shape);
+				const vec3 & reflect_color = 
+					0.5 * ks * shading(ray_reflection, recursionDepth + 1, node, x, y, w, h, ambient, lights);
+				color += reflect_color;
+			// }
 
   #ifdef REFRACTION
 			if(opacity != 1){
@@ -255,18 +287,24 @@ _SKIP_LIGHTING_:
 				double startRefractiveIndex;
 				double endRefractiveIndex;
 				if(ray.inside_shape){
-					startRefractiveIndex = 1.55;
+					startRefractiveIndex = 1.33;
 					endRefractiveIndex = 1.00;
 				} else {
 					startRefractiveIndex = 1.00;
-					endRefractiveIndex = 1.55;
+					endRefractiveIndex = 1.33;
 				}
 				
 				const vec3 & refract_dir = get_refract(n, ray.dir, startRefractiveIndex, endRefractiveIndex);
 				// const Ray & ray_transmition = Ray(intersection, ray.dir);
 				const Ray & ray_transmition = Ray(intersection, refract_dir, !ray.inside_shape);
-				const vec3 & refract_color = 0.8 * ks*
-					shading(ray_transmition, recursionDepth + 1, root, x, y, w, h, ambient, lights);
+				vec3 refract_color;
+				if(ray.inside_shape){
+					refract_color = 0.8 * ks*
+						shading(ray_transmition, recursionDepth + 1, root, x, y, w, h, ambient, lights);
+				} else {
+					refract_color = 0.8 * ks*
+						shading(ray_transmition, recursionDepth + 1, gnode, x, y, w, h, ambient, lights);	
+				}
 				// DPRINTVEC(refract_color);
 				color += (1.0-opacity)*refract_color;
 			}
@@ -281,8 +319,12 @@ _SKIP_LIGHTING_:
 
 		// background color
 		// return vec3(0.0*y / float(h), y*0.1 / float(h), y*0.4 / float(h));	// blue shading
-		return vec3(y / float(h), y*0.1 / float(h), y*0.3 / float(h));	// red shading
-		// return vec3();
+		// return vec3(y / float(h), y*0.1 / float(h), y*0.3 / float(h));	// red shading
+		return vec3(0.5*y / float(h));	// white shading
+
+		// return vec3(0.3, 0.02, 0.05);	// red
+
+		// return vec3(y/(h/10) % 2 == 0 ? 0 : 0.4);
 
 		// return vec3(0);
 	}

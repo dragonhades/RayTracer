@@ -22,6 +22,7 @@ std::mutex xy_mutx;
 int progress = 0;
 std::mutex progress_mutx;
 
+SceneNode * root;
 
 vector<vector<vec3>> color_chart;
 
@@ -29,7 +30,7 @@ vector<vector<vec3>> color_chart;
 
 void Render(
 		// What to render  
-		SceneNode * root,
+		SceneNode * root_node,
 
 		// Image to write to, set to a given width and height  
 		Image & image,
@@ -44,6 +45,11 @@ void Render(
 		const glm::vec3 & ambient,
 		const std::list<Light *> & lights
 ) {
+
+
+	root = root_node;
+
+
     std::cout << "Calling A4_Render(\n" <<
 		  "\t" << *root <<
           "\t" << "Image(width:" << image.width() << ", height:" << image.height() << ")\n"
@@ -61,7 +67,6 @@ void Render(
 	std:: cout <<")" << std::endl;
 
 //----------------------------------------------------------------------------------
-
 
 	// apply viewMatrix this way
 	root->translate(-eye);
@@ -110,7 +115,7 @@ void Render(
  #ifdef MTHREAD
 	for(int i=0; i<NUM_THREADS; ++i){
 		threads[i] = std::thread(Render_Thread, 
-			 w, h, root, eye, view, up, fovy, ambient, lights);
+			 w, h, eye, view, up, fovy, ambient, lights);
 		if(threads[i].get_id() == std::thread::id()) {
 		     std::cerr << "Abort: Failed to create thread " << i << std::endl;
 			 exit(EXIT_FAILURE);
@@ -127,7 +132,7 @@ void Render(
 	for(register int y=0; y < h; ++y){
 		for(register int x=0; x < w; ++x){
 			
-			color_chart[y][x] = Render_Pixel(x, y, w, h, root, fovy, ambient, lights);
+			color_chart[y][x] = Render_Pixel(x, y, w, h, fovy, ambient, lights);
 
 #ifdef PRINT_PROGRESS
 			progress ++;
@@ -180,9 +185,6 @@ void Render_Thread(
 		int w, 
 		int h, 
 
-		// What to render  
-		const SceneNode * root,
-
 		// Viewing parameters  
 		const glm::vec3 eye,
 		const glm::vec3 view,
@@ -221,7 +223,7 @@ void Render_Thread(
 		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */
 
 
-		const vec3 & color = Render_Pixel(x, y, w, h, root, fovy, ambient, lights);
+		const vec3 & color = Render_Pixel(x, y, w, h, fovy, ambient, lights);
 		color_chart[y][x] = color;
 
 		int new_percent;

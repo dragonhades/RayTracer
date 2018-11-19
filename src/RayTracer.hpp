@@ -24,6 +24,7 @@ class Ray;
 class CastResult;
 
 extern std::vector<std::vector<glm::vec3>> color_chart;
+extern SceneNode * root;
 
 void Render(
 		// What to render
@@ -47,9 +48,6 @@ void Render_Thread(
 		int w, 
 		int h,
 
-		// What to render  
-		const SceneNode * root,
-
 		// Viewing parameters  
 		const glm::vec3 eye,
 		const glm::vec3 view,
@@ -66,9 +64,6 @@ glm::vec3 Render_Pixel(
 		int y, 
 		int w, 
 		int h,
-
-		// What to render  
-		const SceneNode * root,
 
 		// Viewing parameters
 		double fovy,
