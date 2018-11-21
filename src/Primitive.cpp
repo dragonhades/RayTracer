@@ -235,15 +235,3 @@ CastResult NonhierBox::intersect(const Ray & ray) {
 	result.pos = m_pos;
 	return result;
 }
-
-void CastResult::transform() {
-	
-	glm::mat4 trans = parentTrans * geoNode->get_transform();
-	glm::mat4 invtrans = inverse(trans);
-
-	trans *= glm::translate(pos);
-
-	this->intersection = glm::vec3( trans*glm::vec4(intersection, 1) );
-	this->surface_normal = glm::normalize(glm::vec3( glm::vec4(surface_normal, 0)*invtrans ));
-
-}

@@ -51,6 +51,7 @@
 #include "Light.hpp"
 #include "Mesh.hpp"
 #include "GeometryNode.hpp"
+#include "ConstructiveNode.hpp"
 #include "JointNode.hpp"
 #include "Primitive.hpp"
 #include "Material.hpp"
@@ -114,6 +115,26 @@ void get_tuple(lua_State* L, int arg, T* data, int n)
     lua_pop(L, 1);
   }
 }
+
+// Create a csg Node
+extern "C"
+int gr_construct_cmd(lua_State* L)
+{
+  GRLUA_DEBUG_CALL;
+  
+  gr_node_ud* data = (gr_node_ud*)lua_newuserdata(L, sizeof(gr_node_ud));
+  data->node = 0;
+
+  const char* name = luaL_checkstring(L, 1);
+  const char* mode = luaL_checkstring(L, 2);
+  data->node = new ConstructiveNode(name, mode);
+
+  luaL_getmetatable(L, "gr.node");
+  lua_setmetatable(L, -2);
+
+  return 1;
+}
+
 
 // Create a Node
 extern "C"
@@ -529,6 +550,8 @@ static const luaL_Reg grlib_functions[] = {
   {"mesh", gr_mesh_cmd},
   {"light", gr_light_cmd},
   {"render", gr_render_cmd},
+  // New for project
+  {"construct", gr_construct_cmd},
   {0, 0}
 };
 

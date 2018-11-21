@@ -13,6 +13,8 @@
 #include "DEBUG.hpp"
 #include "SceneNode.hpp"
 #include "GeometryNode.hpp"
+#include "ConstructiveNode.hpp"
+#include "SolidNode.hpp"
 #include "PhongMaterial.hpp"
 #include "Primitive.hpp"
 #include "Mesh.hpp"
@@ -42,7 +44,36 @@ CastResult intersectNode(const SceneNode* node,
 {
 	CastResult result;
 
-	if(node->m_nodeType == NodeType::GeometryNode)
+	if(node->m_nodeType == NodeType::ConstructiveNode)
+	{
+		ConstructiveNode* cnode = (ConstructiveNode*) node;
+
+		if(cnode->is_Union()){
+			// TODO
+		}
+		else if(cnode->is_Intersect()){
+			// TODO
+		}
+		else if(cnode->is_Difference()){
+			result = intersectNode(cnode.leftNode(), ray, trans*cnode->get_transform());
+			if(result.isHit()){
+				result.type = HitType::CSG;
+				result.solidNode = (SolidNode*) gnode;
+				result.parentTrans = trans;
+				return result;
+			} else {
+				result = intersectNode(cnode.rightNode(), ray, trans*cnode->get_transform());
+				if(result.isHit()){
+					Ray ray_inside(result.intersection, ray.dir, true); // is inside
+					result = intersectNode(cnode.rightNode(), ray, trans*cnode->get_transform());
+				} else {
+					return CastResult();
+				}
+			}
+		}
+	}
+//----------------------------------------------------------------------------------------//
+	else if(node->m_nodeType == NodeType::GeometryNode)
 	{
 		GeometryNode* gnode = (GeometryNode*) node;
 
@@ -59,7 +90,7 @@ CastResult intersectNode(const SceneNode* node,
 				if(!result.isHit()) goto _NO_HIT_;
 			}
 #endif
-			result.geoNode = gnode;
+			result.solidNode = (SolidNode*) gnode;
 			result.parentTrans = trans;
 		}
 	}
@@ -177,11 +208,17 @@ glm::vec3 shading(
 
 	if(result.isHit()){
 
-		GeometryNode* gnode = result.geoNode;
+		GeometryNode* gnode;
+		if(result.type == HitType::CSG){
+			ConstructiveNode * cnode = (ConstructiveNode*) result.solidNode;
+			gnode = (GeometryNode*) cnode->get_SceneNode();
+		} else {
+			gnode = (GeometryNode*) result.solidNode;
+		}
 
 		DASSERT(gnode != nullptr, "gnode is Null.");
 
-		DASSERT(result.geoNode != nullptr, "null");
+		DASSERT(result.solidNode != nullptr, "null");
 
 		/** Phong illumination **/
 		PhongMaterial* phong = (PhongMaterial*) gnode->m_material;
