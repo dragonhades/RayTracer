@@ -12,14 +12,14 @@
 #define MTHREAD
 #define PRINT_PROGRESS
 
-#define SSAA
-#define REFLECTION
-#define REFRACTION
-#define MAX_SHADE_RECURSION 5
+// #define SSAA
+// #define REFLECTION
+// #define REFRACTION
+#define MAX_SHADE_RECURSION 6
 
 // #define DRAW_BBOX
 #define USE_LIGHT_FRONT
-#define USE_LIGHT_BACK 4
+#define USE_LIGHT_BACK
 class Ray;
 class CastResult;
 

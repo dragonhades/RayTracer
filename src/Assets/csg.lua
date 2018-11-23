@@ -8,16 +8,16 @@ glass = gr.material({0.0, 0.0, 0.0}, {0.8, 0.8, 0.8}, 50, 0.0)
 
 scene_root = gr.node('root')
 
-csg1 = gr.construct('csg1', 'union')
+csg1 = gr.construct('csg1', 'difference')
 scene_root:add_child(csg1)
-
-s1 = gr.nh_sphere('s1', {-200, 0, -400}, 100)
-csg1:add_child(s1)
-s1:set_material(mat1)
 
 b1 = gr.nh_box('b1', {-325, -175, -375}, 150)
 csg1:add_child(b1)
 b1:set_material(mat3)
+
+s1 = gr.nh_sphere('s1', {-200, -50, -300}, 100)
+csg1:add_child(s1)
+s1:set_material(mat1)
 
 s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
 scene_root:add_child(s2)

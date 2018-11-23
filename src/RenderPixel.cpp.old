@@ -42,8 +42,6 @@ CastResult intersectNode(const SceneNode* node,
 						  const Ray & ray, 
 						  const mat4 & trans) 
 {
-	CastResult result;
-
 	if(node->m_nodeType == NodeType::ConstructiveNode)
 	{
 		ConstructiveNode* cnode = (ConstructiveNode*) node;
@@ -62,7 +60,9 @@ CastResult intersectNode(const SceneNode* node,
 				result.transform();
 				Ray ray_inside(result.intersection, ray.dir, true); // is inside
 				CastResult result = intersectNode(cnode->leftNode(), ray_inside, new_trans);
+				DPRINT("1");
 				if(result.isHit()){
+					DPRINT("?");
 					// Inside the subtracted shape, we hit the solid shape; This is the part we want to subtract out.
 					result.transform();
 
@@ -99,7 +99,7 @@ CastResult intersectNode(const SceneNode* node,
 
 		Ray ray_copy = ray;
 		ray_copy.setTransform(inverse(trans*gnode->get_transform()));
-		result = gnode->m_primitive->intersect(ray_copy);
+		CastResult result = gnode->m_primitive->intersect(ray_copy);
 
 		if(result.isHit()){
 
@@ -107,15 +107,17 @@ CastResult intersectNode(const SceneNode* node,
 			if(result.type == HitType::BBox){
 				Mesh* mesh = (Mesh*) gnode->m_primitive;
 				result = mesh->intersectTriangles(ray_copy);
-				if(!result.isHit()) goto _NO_HIT_;
+				if(!result.isHit()) return CastResult();
 			}
 #endif
 			result.solidNode = (SolidNode*) gnode;
 			result.parentTrans = trans;
+
+			return result;
+		} else {
+			return CastResult();
 		}
 	}
-_NO_HIT_:
-	return result;
 }
 
 CastResult intersectSceneRecurse(const SceneNode* node, 
@@ -132,10 +134,10 @@ CastResult intersectSceneRecurse(const SceneNode* node,
 		result_min = result;
 	}
 
-	const ConstructiveNode* cnode = dynamic_cast<const ConstructiveNode*>(node);
-	if(cnode){
-		goto _SKIP_LOOP_;
-	}
+	// const ConstructiveNode* cnode = dynamic_cast<const ConstructiveNode*>(node);
+	// if(cnode){
+	// 	goto _SKIP_LOOP_;
+	// }
 
 	for (SceneNode* child : node->children){
 		const CastResult & result = 
