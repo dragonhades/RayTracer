@@ -10,7 +10,7 @@
 
 #define NUM_THREADS 8
 #define MTHREAD
-#define PRINT_PROGRESS
+// #define PRINT_PROGRESS
 
 // #define SSAA
 // #define REFLECTION

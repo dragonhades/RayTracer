@@ -15,43 +15,55 @@ b1 = gr.nh_box('b1', {-325, -175, -375}, 150)
 csg1:add_child(b1)
 b1:set_material(mat3)
 
-s1 = gr.nh_sphere('s1', {-200, -50, -300}, 100)
-csg1:add_child(s1)
-s1:set_material(mat1)
+b2 = gr.nh_box('b2', {-240, -130, -270}, 50)
+csg1:add_child(b2)
 
-s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
-scene_root:add_child(s2)
-s2:set_material(glass)
+-- csg11 = gr.construct('csg11', 'difference')
+-- scene_root:add_child(csg11)
 
-s3 = gr.nh_sphere('s3', {0, -1200, -500}, 1000)
-scene_root:add_child(s3)
-s3:set_material(mat2)
+-- b22 = gr.nh_box('b22', {-240, -30, -270}, 50)
 
-s4 = gr.nh_sphere('s4', {-100, 225, -300}, 50)
-scene_root:add_child(s4)
-s4:set_material(mat3)
+-- csg11:add_child(csg1)
+-- csg11:add_child(b22)
 
-s5 = gr.nh_sphere('s5', {0, 100, -250}, 25)
-scene_root:add_child(s5)
-s5:set_material(mat1)
+
+csg2 = gr.construct('csg2', 'difference')
+scene_root:add_child(csg2)
+
+b3 = gr.nh_box('b3', {-325, -175, -375}, 150)
+csg2:add_child(b3)
+b3:set_material(mat3)
+
+s4 = gr.nh_sphere('s4', {-240, -100, -280}, 90)
+csg2:add_child(s4)
+
+csg2:translate(500, 0, 0)
+
+-- s4 = gr.nh_sphere('s4', {-100, 225, -300}, 50)
+-- scene_root:add_child(s4)
+-- s4:set_material(mat3)
+
+-- s5 = gr.nh_sphere('s5', {0, 100, -250}, 25)
+-- scene_root:add_child(s5)
+-- s5:set_material(mat1)
 
 -- A small stellated dodecahedron.
 
-steldodec = gr.mesh( 'dodec', 'smstdodeca.obj' )
-steldodec:set_material(mat3)
-scene_root:add_child(steldodec)
+-- steldodec = gr.mesh( 'dodec', 'smstdodeca.obj' )
+-- steldodec:set_material(mat3)
+-- scene_root:add_child(steldodec)
 
 white_light = gr.light({-100.0, 150.0, 400.0}, {0.9, 0.9, 0.9}, {1, 0, 0})
 orange_light = gr.light({400.0, 100.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 
 gr.render(scene_root, 'csg.png', 
 	-- 256, 256,
-	480, 270,
-	-- 640, 360,
+	-- 480, 270,
+	640, 360,
 	-- 1280, 720,
 	-- 3840, 2160,
 
-	  {0, 0, 550},
+	  {0, 100, 550},
 	  -- {0, 0, 750},
 
 	   {0, 0, -1}, {0, 1, 0}, 50,

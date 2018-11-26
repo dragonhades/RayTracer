@@ -40,6 +40,37 @@ Ray getPrimaryRay(const float x, const float y, const int width, const int heigh
 
 CastResult intersectNode(const SceneNode* node, 
 						  const Ray & ray, 
+						  const mat4 & trans);
+
+int csgPenetrateRecurse(const SceneNode* ntarget, float t_end, Ray ray, const mat4 & trans, int acc=0, float t_target_acc=0){
+	CastResult result_target = intersectNode(ntarget, ray, trans);
+
+	if(!result_target.isHit()){
+		return acc;
+	}
+
+	float t_target = result_target.t + t_target_acc;
+
+	if(t_target>= t_end){
+		return acc;
+	}
+	else {
+		result_target.transform();
+		ray.org = result_target.intersection;
+		return csgPenetrateRecurse(ntarget, t_end, ray, trans, acc+1, t_target);
+	}
+}
+
+int csgPenetrate(const SceneNode* ntarget, const SceneNode* nend, const Ray & ray, const mat4 & trans){
+	CastResult result_end = intersectNode(nend, ray, trans);
+	float t_end = result_end.t;
+
+	return csgPenetrateRecurse(ntarget, t_end, ray, trans, 0);
+}
+
+
+CastResult intersectNode(const SceneNode* node, 
+						  const Ray & ray, 
 						  const mat4 & trans) 
 {
 	CastResult result;
@@ -56,38 +87,110 @@ CastResult intersectNode(const SceneNode* node,
 		}
 		else if(cnode->is_Difference()){
 			const mat4 & new_trans = trans*cnode->get_transform();
-			CastResult result = intersectNode(cnode->rightNode(), ray, new_trans);
-			if(result.isHit()){
-				// hit the subtracted shape
-				result.transform();
-				Ray ray_inside(result.intersection, ray.dir, true); // is inside
-				CastResult result = intersectNode(cnode->leftNode(), ray_inside, new_trans);
-				if(result.isHit()){
-					// Inside the subtracted shape, we hit the solid shape; This is the part we want to subtract out.
-					result.transform();
+			CastResult result_right_min = intersectNode(cnode->rightNode(), ray, new_trans);
+			if(result_right_min.isHit()){
+				
+				CastResult result_left_min = intersectNode(cnode->leftNode(), ray, new_trans);
 
-					Ray ray_inside(result.intersection, ray.dir, true); // is inside
-					CastResult result = intersectNode(cnode->rightNode(), ray_inside, new_trans);
+				if(!result_left_min.isHit()) return CastResult();
 
-					DASSERT(result.isHit(), "Should always hit.");	// should garentee a hit
+				CastResult result_left_min_copy = result_left_min;
+				result_left_min_copy.transform();
+				Ray ray_inside_left(result_left_min_copy.intersection, ray.dir, true);
+				CastResult result_left_max = intersectNode(cnode->leftNode(), ray_inside_left, new_trans);
 
-		 			result.surface_normal = -result.surface_normal;
-					
-					result.type = HitType::CSG;
-					result.solidNode = (SolidNode*) cnode;
-					result.parentTrans = trans;	// use old parent trans
-					return result;
-
-				} else {
-					// ray does not hit solid shape
-					CastResult result = intersectNode(cnode->rightNode(), ray, new_trans);
-					DASSERT(result.isHit(), "should hit");
-					result.transform();
-					// shoot through the subtracted shape; continue hit test
-					Ray ray_outside(result.intersection, ray.dir, false); // outside
-					return intersectNode(cnode->leftNode(), ray_outside, new_trans);
+				if(!result_left_max.isHit()){
+					float t_left = result_left_min.t;
+					float t_right = result_right_min.t;
+					if(t_left <= t_right){
+						return CastResult();
+					} else {
+						CastResult rtv = result_right_min;
+						rtv.type = HitType::CSG;
+						rtv.solidNode = (SolidNode*) cnode;
+						rtv.parentTrans = trans;	// use old parent trans
+						return rtv;
+					}
 				}
+
+				CastResult result_right_min_copy = result_right_min;
+				result_right_min_copy.transform();
+
+				Ray ray_inside_right(result_right_min_copy.intersection, ray.dir, true); 
+				CastResult result_right_max = intersectNode(cnode->rightNode(), ray_inside_right, new_trans);
+
+				// DASSERT(result_right_max.isHit(), "?");
+				// if(!result_right_max.isHit()){
+				// 	// result_right_max = result_right_min;
+				// 	// return CastResult();
+				// }
+
+				float t_left_min = result_left_min.t;
+				float t_right_min = result_right_min.t;
+				float t_left_max = result_left_max.t + result_left_min.t;
+				float t_right_max = result_right_max.t + result_right_min.t;
+
+				CastResult rtv;
+
+				if(t_left_min < t_right_min || t_left_min > t_right_max){
+					rtv = result_left_min;
+				} else if(t_right_max < t_left_max){
+					rtv = result_right_max;
+					rtv.surface_normal = -rtv.surface_normal;
+				} else {
+					return CastResult();
+				}
+
+				rtv.type = HitType::CSG;
+				rtv.solidNode = (SolidNode*) cnode;
+				rtv.parentTrans = trans;	// use old parent trans
+				return rtv;
+
+
+				// if(result_right.isHit()){
+
+				// 		int hits = csgPenetrateRecurse(cnode->leftNode(), result_right.t, ray_inside, new_trans);
+
+				// 		if(hits % 2 == 1){
+				// 			//  return the carved out shape, invert normal
+				//  			result_right.surface_normal = -result_right.surface_normal;
+
+				// 			result_right.type = HitType::CSG;
+				// 			result_right.solidNode = (SolidNode*) cnode;
+				// 			result_right.parentTrans = trans;	// use old parent trans
+				// 			return result_right;
+				// 		} else {
+				// 			return CastResult();
+				// 		}
+				// 	}
+				// 	} else { // result_left.t > result_right.t
+
+				// 		// solid shape is outside subtraction shape
+				// 		//  return solid shape intersection
+
+				// 		result_left.type = HitType::CSG;
+				// 		result_left.solidNode = (SolidNode*) cnode;
+				// 		result_left.parentTrans = trans;	// use old parent trans
+				// 		return CastResult();
+				// 		return result_left;
+				// 	}
+				// }
+				// else if(result_left.isHit()){
+
+				// 	// hit the edge(?) of subtraction shape(?); then hit the solid shape
+				// 	result_left.type = HitType::CSG;
+				// 	result_left.solidNode = (SolidNode*) cnode;
+				// 	result_left.parentTrans = trans;	// use old parent trans
+				// 	return result_left;
+				// }
+				// else if(result_right.isHit()){
+				// 	// penetrate subtraction shape, without hitting solid shape; the ray missed.
+				// 	// return intersectNode(cnode->leftNode(), ray, new_trans);
+				// 	return CastResult();
+
+				// }
 			} else {
+				// test the supposely exposed left shape surface
 				return intersectNode(cnode->leftNode(), ray, new_trans);
 			}
 		}
