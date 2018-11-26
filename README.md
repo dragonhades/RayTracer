@@ -18,6 +18,18 @@ $ ./RayTracer Assets/simple.lua  ## Output: simple.png
 
 Supported Features
 -------------------------
+### Reflection
+
+Recursive reflection w/o distributed rays.
+
+### Refraction
+
+Second iteraction.
+
+### Constructive Solid Geometry
+
+"difference" mode completed.
+
 ### Super Sampling
 
 Take average color of 4 corners of a pixel.
@@ -27,14 +39,6 @@ Compare sample.png vs. sample-SSAA.png. Other images do not have super sampling 
 ### Multi-threading
 
 Supported...
-
-### Reflection
-
-Recursive reflection w/o distributed rays.
-
-### Refraction
-
-Second iteraction.
 
 Manual
 ----------------------
