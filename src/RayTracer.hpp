@@ -10,20 +10,21 @@
 
 #define NUM_THREADS 8
 #define MTHREAD
-#define PRINT_PROGRESS
+// #define PRINT_PROGRESS
 
 #define SSAA
-#define REFLECTION
-#define REFRACTION
-#define MAX_SHADE_RECURSION 5
+// #define REFLECTION
+// #define REFRACTION
+#define MAX_SHADE_RECURSION 6
 
 // #define DRAW_BBOX
 #define USE_LIGHT_FRONT
-#define USE_LIGHT_BACK 4
+#define USE_LIGHT_BACK
 class Ray;
 class CastResult;
 
 extern std::vector<std::vector<glm::vec3>> color_chart;
+extern SceneNode * root;
 
 void Render(
 		// What to render
@@ -47,9 +48,6 @@ void Render_Thread(
 		int w, 
 		int h,
 
-		// What to render  
-		const SceneNode * root,
-
 		// Viewing parameters  
 		const glm::vec3 eye,
 		const glm::vec3 view,
@@ -66,9 +64,6 @@ glm::vec3 Render_Pixel(
 		int y, 
 		int w, 
 		int h,
-
-		// What to render  
-		const SceneNode * root,
 
 		// Viewing parameters
 		double fovy,

@@ -5,32 +5,11 @@
 #include <glm/glm.hpp>
 #include <string>
 #include "Ray.hpp"
-
-enum class HitType {
-  None,
-  Primitive,
-  Triangle,
-  BBox
-};
-
-class Primitive;
-
-struct Ray;
-class GeometryNode;
-
-struct CastResult {
-  HitType type = HitType::None;
-  glm::vec3 intersection;
-  glm::vec3 surface_normal;
-  GeometryNode* geoNode = nullptr;
-  double t;
-  glm::vec3 pos;
-  glm::mat4 parentTrans;
-
-  void transform();
-
-  bool isHit() const { return type != HitType::None; }
-};
+#include "Primitive.hpp"
+#include "polyroots.hpp"
+#include "Ray.hpp"
+#include "GeometryNode.hpp"
+#include "CastResult.hpp"
 
 enum class PrimitiveType {
   Sphere,
