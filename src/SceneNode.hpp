@@ -14,7 +14,8 @@
 enum class NodeType {
 	SceneNode,
 	GeometryNode,
-	JointNode
+	JointNode,
+    ConstructiveNode
 };
 
 class SceneNode {
@@ -32,7 +33,7 @@ public:
     
     void set_transform(const glm::mat4& m);
     
-    void add_child(SceneNode* child);
+    virtual void add_child(SceneNode* child);
     
     void remove_child(SceneNode* child);
 

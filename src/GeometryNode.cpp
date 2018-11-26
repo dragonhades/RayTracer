@@ -19,7 +19,7 @@ using namespace glm;
 //---------------------------------------------------------------------------------------
 GeometryNode::GeometryNode(
 	const std::string & name, Primitive *prim, Material *mat )
-	: SceneNode( name )
+	: SolidNode( name )
 	, m_material( mat )
 	, m_primitive( prim )
 {

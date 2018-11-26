@@ -2,11 +2,12 @@
 
 #pragma once
 
-#include "SceneNode.hpp"
-#include "Primitive.hpp"
+#include "SolidNode.hpp"
 #include "Material.hpp"
 
-class GeometryNode : public SceneNode {
+class Primitive;
+
+class GeometryNode : public SolidNode {
 public:
 	GeometryNode( const std::string & name, Primitive *prim, 
 		Material *mat = nullptr );
