@@ -88,6 +88,7 @@ CastResult intersectNode(const SceneNode* node,
 			const mat4 & new_trans = trans*cnode->get_transform();
 			CastResult result_right_min = intersectNode(cnode->rightNode(), ray, new_trans);
 			if(result_right_min.isHit()){
+// return CastResult();
 				
 				CastResult result_left_min = intersectNode(cnode->leftNode(), ray, new_trans);
 
@@ -131,7 +132,6 @@ CastResult intersectNode(const SceneNode* node,
 				float t_right_max = result_right_max.t + result_right_min.t;
 
 				CastResult rtv;
-
 				if(t_left_min < t_right_min || t_left_min > t_right_max){
 					rtv = result_left_min;
 				} else if(t_right_max < t_left_max){

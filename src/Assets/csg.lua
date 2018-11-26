@@ -9,22 +9,23 @@ glass = gr.material({0.0, 0.0, 0.0}, {0.8, 0.8, 0.8}, 50, 0.0)
 scene_root = gr.node('root')
 
 csg1 = gr.construct('csg1', 'difference')
-scene_root:add_child(csg1)
+-- scene_root:add_child(csg1)
 
 b1 = gr.nh_box('b1', {-325, -175, -375}, 150)
 csg1:add_child(b1)
 b1:set_material(mat3)
 
-b2 = gr.nh_box('b2', {-240, -130, -270}, 50)
+b2 = gr.nh_box('b2', {-250, -140, -290}, 90)
 csg1:add_child(b2)
 
 csg11 = gr.construct('csg11', 'difference')
 scene_root:add_child(csg11)
+csg11:add_child(csg1)
 
 b22 = gr.nh_box('b22', {-330, -70, -270}, 50)
-
-csg11:add_child(csg1)
 csg11:add_child(b22)
+
+csg11:rotate('y', -10)
 
 
 csg2 = gr.construct('csg2', 'difference')
@@ -59,8 +60,8 @@ orange_light = gr.light({400.0, 100.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 gr.render(scene_root, 'csg.png', 
 	-- 256, 256,
 	-- 480, 270,
-	640, 360,
-	-- 1280, 720,
+	-- 640, 360,
+	1280, 720,
 	-- 3840, 2160,
 
 	  {0, 100, 550},

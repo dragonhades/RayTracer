@@ -12,7 +12,7 @@
 #define MTHREAD
 // #define PRINT_PROGRESS
 
-// #define SSAA
+#define SSAA
 // #define REFLECTION
 // #define REFRACTION
 #define MAX_SHADE_RECURSION 6
