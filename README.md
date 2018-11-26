@@ -2,8 +2,10 @@ RayTracer Project
 ====================================================
 Robust CPU-based ray tracer. **STAR me** if you find it helpful... ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾  
 
-![4K sample image](images/screenshot4K.png)
+![](images/screenshot4K.png)
+_4K sample image_
 ![CSG demo](images/csg.png)
+_CSG demo_
 
 
 Compilation
