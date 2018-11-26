@@ -6,6 +6,7 @@
 #include <glm/ext.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include "GeometryNode.hpp"
 #include "SolidNode.hpp"
 
 enum class HitType {
@@ -20,7 +21,7 @@ struct CastResult {
   HitType type = HitType::None;
   glm::vec3 intersection;
   glm::vec3 surface_normal;
-  SolidNode* solidNode = nullptr;
+  GeometryNode* gnode = nullptr;
   double t;
   glm::vec3 pos;
   glm::mat4 parentTrans;
@@ -29,7 +30,7 @@ struct CastResult {
 
   void transform() {
   
-    glm::mat4 trans = parentTrans * solidNode->get_transform();
+    glm::mat4 trans = parentTrans * gnode->get_transform();
     glm::mat4 invtrans = inverse(trans);
 
     trans *= glm::translate(pos);

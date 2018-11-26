@@ -73,8 +73,6 @@ CastResult intersectNode(const SceneNode* node,
 						  const Ray & ray, 
 						  const mat4 & trans) 
 {
-	CastResult result;
-
 	if(node->m_nodeType == NodeType::ConstructiveNode)
 	{
 		ConstructiveNode* cnode = (ConstructiveNode*) node;
@@ -86,6 +84,7 @@ CastResult intersectNode(const SceneNode* node,
 			// TODO
 		}
 		else if(cnode->is_Difference()){
+
 			const mat4 & new_trans = trans*cnode->get_transform();
 			CastResult result_right_min = intersectNode(cnode->rightNode(), ray, new_trans);
 			if(result_right_min.isHit()){
@@ -106,9 +105,10 @@ CastResult intersectNode(const SceneNode* node,
 						return CastResult();
 					} else {
 						CastResult rtv = result_right_min;
+						rtv.gnode = result_left_min.gnode;
+						rtv.surface_normal = -rtv.surface_normal;
 						rtv.type = HitType::CSG;
-						rtv.solidNode = (SolidNode*) cnode;
-						rtv.parentTrans = trans;	// use old parent trans
+						rtv.parentTrans = new_trans;
 						return rtv;
 					}
 				}
@@ -136,59 +136,15 @@ CastResult intersectNode(const SceneNode* node,
 					rtv = result_left_min;
 				} else if(t_right_max < t_left_max){
 					rtv = result_right_max;
+					rtv.gnode = result_left_min.gnode;
 					rtv.surface_normal = -rtv.surface_normal;
 				} else {
 					return CastResult();
 				}
 
 				rtv.type = HitType::CSG;
-				rtv.solidNode = (SolidNode*) cnode;
-				rtv.parentTrans = trans;	// use old parent trans
+				rtv.parentTrans = new_trans;
 				return rtv;
-
-
-				// if(result_right.isHit()){
-
-				// 		int hits = csgPenetrateRecurse(cnode->leftNode(), result_right.t, ray_inside, new_trans);
-
-				// 		if(hits % 2 == 1){
-				// 			//  return the carved out shape, invert normal
-				//  			result_right.surface_normal = -result_right.surface_normal;
-
-				// 			result_right.type = HitType::CSG;
-				// 			result_right.solidNode = (SolidNode*) cnode;
-				// 			result_right.parentTrans = trans;	// use old parent trans
-				// 			return result_right;
-				// 		} else {
-				// 			return CastResult();
-				// 		}
-				// 	}
-				// 	} else { // result_left.t > result_right.t
-
-				// 		// solid shape is outside subtraction shape
-				// 		//  return solid shape intersection
-
-				// 		result_left.type = HitType::CSG;
-				// 		result_left.solidNode = (SolidNode*) cnode;
-				// 		result_left.parentTrans = trans;	// use old parent trans
-				// 		return CastResult();
-				// 		return result_left;
-				// 	}
-				// }
-				// else if(result_left.isHit()){
-
-				// 	// hit the edge(?) of subtraction shape(?); then hit the solid shape
-				// 	result_left.type = HitType::CSG;
-				// 	result_left.solidNode = (SolidNode*) cnode;
-				// 	result_left.parentTrans = trans;	// use old parent trans
-				// 	return result_left;
-				// }
-				// else if(result_right.isHit()){
-				// 	// penetrate subtraction shape, without hitting solid shape; the ray missed.
-				// 	// return intersectNode(cnode->leftNode(), ray, new_trans);
-				// 	return CastResult();
-
-				// }
 			} else {
 				// test the supposely exposed left shape surface
 				return intersectNode(cnode->leftNode(), ray, new_trans);
@@ -202,7 +158,7 @@ CastResult intersectNode(const SceneNode* node,
 
 		Ray ray_copy = ray;
 		ray_copy.setTransform(inverse(trans*gnode->get_transform()));
-		result = gnode->m_primitive->intersect(ray_copy);
+		CastResult result = gnode->m_primitive->intersect(ray_copy);
 
 		if(result.isHit()){
 
@@ -210,15 +166,14 @@ CastResult intersectNode(const SceneNode* node,
 			if(result.type == HitType::BBox){
 				Mesh* mesh = (Mesh*) gnode->m_primitive;
 				result = mesh->intersectTriangles(ray_copy);
-				if(!result.isHit()) goto _NO_HIT_;
 			}
 #endif
-			result.solidNode = (SolidNode*) gnode;
+			result.gnode = gnode;
 			result.parentTrans = trans;
+			return result;
 		}
 	}
-_NO_HIT_:
-	return result;
+	return CastResult();
 }
 
 CastResult intersectSceneRecurse(const SceneNode* node, 
@@ -336,17 +291,9 @@ glm::vec3 shading(
 
 	if(result.isHit()){
 
-		GeometryNode* gnode;
-		if(result.type == HitType::CSG){
-			ConstructiveNode * cnode = (ConstructiveNode*) result.solidNode;
-			gnode = (GeometryNode*) cnode->get_SceneNode();
-		} else {
-			gnode = (GeometryNode*) result.solidNode;
-		}
+		GeometryNode* gnode = result.gnode;
 
 		DASSERT(gnode != nullptr, "gnode is Null.");
-
-		DASSERT(result.solidNode != nullptr, "null");
 
 		/** Phong illumination **/
 		PhongMaterial* phong = (PhongMaterial*) gnode->m_material;
@@ -362,6 +309,7 @@ glm::vec3 shading(
 
 		// ambient = Kd * Ia
 		vec3 color = ambient*kd;
+
 
 //--------------------------  Lighting  -----------------------------//
  

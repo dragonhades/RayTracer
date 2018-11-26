@@ -3,7 +3,6 @@
 #pragma once
 
 #include "SolidNode.hpp"
-#include "Primitive.hpp"
 #include "Material.hpp"
 
 class Primitive;

@@ -18,13 +18,13 @@ b1:set_material(mat3)
 b2 = gr.nh_box('b2', {-240, -130, -270}, 50)
 csg1:add_child(b2)
 
--- csg11 = gr.construct('csg11', 'difference')
--- scene_root:add_child(csg11)
+csg11 = gr.construct('csg11', 'difference')
+scene_root:add_child(csg11)
 
--- b22 = gr.nh_box('b22', {-240, -30, -270}, 50)
+b22 = gr.nh_box('b22', {-330, -70, -270}, 50)
 
--- csg11:add_child(csg1)
--- csg11:add_child(b22)
+csg11:add_child(csg1)
+csg11:add_child(b22)
 
 
 csg2 = gr.construct('csg2', 'difference')
