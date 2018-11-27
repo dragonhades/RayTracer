@@ -317,10 +317,10 @@ glm::vec3 shading(
 
 #ifdef LIGHT_TURN_ON
 
-		// for(Light* l : lights) {
+		for(Light* l : lights) {
 
-		Light* l = lights.front();
-		for(int i=0; i<1; i++) {
+		// Light* l = lights.front();
+		// for(int i=0; i<1; i++) {
 
 
 			const float & light_distance = glm::distance(l->position, intersection);

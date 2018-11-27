@@ -3,6 +3,7 @@
 mat1 = gr.material({0.7, 1.0, 0.7}, {0.5, 0.7, 0.5}, 25, 1)
 mat2 = gr.material({0.5, 0.5, 0.5}, {0.5, 0.7, 0.5}, 25, 1)
 mat3 = gr.material({1.0, 0.6, 0.1}, {0.1, 0.2, 0.1}, 10, 1)
+mat32 = gr.material({0.5, 0.5, 0.5}, {0.1, 0.2, 0.1}, 10, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 0.1)
 glass = gr.material({0.0, 0.0, 0.0}, {0.8, 0.8, 0.8}, 50, 0.0)
 
@@ -46,7 +47,7 @@ csg2:add_child(s4)
 csg2:translate(500, 0, 0)
 
 b5 = gr.cube('b5')
-b5:set_material(mat1)
+b5:set_material(mat32)
 scene_root:add_child(b5)
 b5:scale(160, 85, 15)
 b5:translate(-240+500, -140, -320)
@@ -71,8 +72,8 @@ orange_light = gr.light({400.0, 100.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 gr.render(scene_root, 'csg.png', 
 	-- 256, 256,
 	-- 480, 270,
-	640, 360,
-	-- 1280, 720,
+	-- 640, 360,
+	1280, 720,
 	-- 3840, 2160,
 
 	  {0, 100, 550},
