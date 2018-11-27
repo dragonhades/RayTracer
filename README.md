@@ -37,6 +37,10 @@ Second iteraction.
 
 "difference" mode completed.
 
+Now supports hierarchical CSG tree.
+
+"union" mode completed.
+
 ### Super Sampling
 
 Take average color of 4 corners of a pixel.

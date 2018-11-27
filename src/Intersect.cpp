@@ -50,7 +50,78 @@ CastResult intersectNode(const SceneNode* node,
 		ConstructiveNode* cnode = (ConstructiveNode*) node;
 
 		if(cnode->is_Union()){
-			// TODO
+
+			const mat4 & new_trans = trans*cnode->get_transform();
+
+			if(ray.inside_shape){
+
+				// find max t, return
+
+				float t_left_max;
+				float t_right_max;
+
+				// get left max t
+				CastResult result_left_min = intersectNode(cnode->leftNode(), ray, new_trans);
+				CastResult result_left_max;
+				if(result_left_min.isHit()){
+					CastResult result_left_min_copy = result_left_min;
+					result_left_min_copy.transform();
+					Ray second_ray_left(result_left_min_copy.intersection, ray.dir, true);
+					result_left_max = intersectNode(cnode->leftNode(), second_ray_left, new_trans);
+					if(!result_left_max.isHit()) result_left_max = result_left_min;
+					t_left_max = result_left_max.t;
+				} else {
+					t_left_max = -1;
+				}
+
+				// get right max t
+				CastResult result_right_min = intersectNode(cnode->rightNode(), ray, new_trans);
+				CastResult result_right_max;
+				if(result_right_min.isHit()) {
+					CastResult result_right_min_copy = result_right_min;
+					result_right_min_copy.transform();
+					Ray second_ray_right(result_right_min_copy.intersection, ray.dir, true);
+					result_right_max = intersectNode(cnode->rightNode(), second_ray_right, new_trans);
+					if(!result_right_max.isHit()) result_right_max = result_right_min;
+					t_right_max = result_right_max.t;
+				} else {
+					t_right_max = -1;
+				}
+
+				DASSERT(result_left_min.isHit() || result_right_min.isHit(), 
+					"inside ray has no intersection with neither shapes");
+
+				if(t_left_max > t_right_max){
+					result_left_max.type = HitType::CSG;
+					result_left_max.parentTrans = new_trans;
+					return result_left_max;
+				} else {
+					result_right_max.type = HitType::CSG;
+					result_right_max.parentTrans = new_trans;
+					return result_right_max;
+				}
+
+			} else {
+				CastResult result_left = intersectNode(cnode->leftNode(), ray, new_trans);
+				CastResult result_right = intersectNode(cnode->rightNode(), ray, new_trans);
+
+				if(!result_left.isHit() && !result_right.isHit()) return CastResult();
+				if(result_left.isHit() && !result_right.isHit()) return result_left;
+				if(!result_left.isHit() && result_right.isHit()) return result_right;
+				else {
+					if(result_left.t < result_right.t){
+						DASSERT(result_left.gnode != nullptr, "Empty CastResult");
+						result_left.type = HitType::CSG;
+						result_left.parentTrans = new_trans;
+						return result_left;
+					} else {
+						DASSERT(result_right.gnode != nullptr, "Empty CastResult");
+						result_right.type = HitType::CSG;
+						result_right.parentTrans = new_trans;
+						return result_right;
+					}
+				}
+			}
 		}
 		else if(cnode->is_Intersect()){
 			// TODO
