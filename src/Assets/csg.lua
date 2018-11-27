@@ -27,6 +27,11 @@ csg11:add_child(b22)
 
 csg11:rotate('y', -10)
 
+b12 = gr.nh_box('b12', {-250, -140, -290}, 30)
+b12:set_material(mat3)
+scene_root:add_child(b12)
+b12:rotate('y', -10)
+
 
 csg2 = gr.construct('csg2', 'difference')
 scene_root:add_child(csg2)
@@ -39,6 +44,12 @@ s4 = gr.nh_sphere('s4', {-240, -100, -280}, 90)
 csg2:add_child(s4)
 
 csg2:translate(500, 0, 0)
+
+b5 = gr.cube('b5')
+b5:set_material(mat1)
+scene_root:add_child(b5)
+b5:scale(160, 85, 15)
+b5:translate(-240+500, -140, -320)
 
 -- s4 = gr.nh_sphere('s4', {-100, 225, -300}, 50)
 -- scene_root:add_child(s4)
@@ -60,8 +71,8 @@ orange_light = gr.light({400.0, 100.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 gr.render(scene_root, 'csg.png', 
 	-- 256, 256,
 	-- 480, 270,
-	-- 640, 360,
-	1280, 720,
+	640, 360,
+	-- 1280, 720,
 	-- 3840, 2160,
 
 	  {0, 100, 550},

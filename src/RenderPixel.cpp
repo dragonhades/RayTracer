@@ -88,7 +88,8 @@ CastResult intersectNode(const SceneNode* node,
 			const mat4 & new_trans = trans*cnode->get_transform();
 			CastResult result_right_min = intersectNode(cnode->rightNode(), ray, new_trans);
 			if(result_right_min.isHit()){
-// return CastResult();
+
+				// return CastResult();
 				
 				CastResult result_left_min = intersectNode(cnode->leftNode(), ray, new_trans);
 
@@ -120,22 +121,23 @@ CastResult intersectNode(const SceneNode* node,
 				Ray ray_inside_right(result_right_min_copy.intersection, ray.dir, true); 
 				CastResult result_right_max = intersectNode(cnode->rightNode(), ray_inside_right, new_trans);
 
-				// DASSERT(result_right_max.isHit(), "?");
-				// if(!result_right_max.isHit()){
-				// 	// result_right_max = result_right_min;
-				// 	// return CastResult();
-				// }
+
 
 				float t_left_min = result_left_min.t;
 				float t_right_min = result_right_min.t;
 				float t_left_max = result_left_max.t + result_left_min.t;
 				float t_right_max = result_right_max.t + result_right_min.t;
 
+				if(!result_right_max.isHit()){
+					t_right_min = INT_MIN;
+				}
+
 				CastResult rtv;
 				if(t_left_min < t_right_min || t_left_min > t_right_max){
 					rtv = result_left_min;
 				} else if(t_right_max < t_left_max){
 					rtv = result_right_max;
+					rtv.t = t_right_max;
 					rtv.gnode = result_left_min.gnode;
 					rtv.surface_normal = -rtv.surface_normal;
 				} else {
@@ -312,22 +314,15 @@ glm::vec3 shading(
 
 
 //--------------------------  Lighting  -----------------------------//
- 
-	#if defined USE_LIGHT_FRONT && defined USE_LIGHT_BACK
-		for(Light* l : lights)
-	#else
-	#ifdef USE_LIGHT_FRONT
+
+#ifdef LIGHT_TURN_ON
+
+		// for(Light* l : lights) {
+
 		Light* l = lights.front();
-	#endif
-	#ifdef USE_LIGHT_BACK
-		Light* l = lights.back();
-	#else
-		goto _SKIP_LIGHTING_;
-	#endif
-	#endif //both
+		for(int i=0; i<1; i++) {
 
 
-		{
 			const float & light_distance = glm::distance(l->position, intersection);
 			const vec3 & I = l->colour 
 				/ (l->falloff[0] + l->falloff[1]*light_distance + l->falloff[2]*light_distance*light_distance);
@@ -370,17 +365,16 @@ glm::vec3 shading(
 			// 			// + ks*std::pow(glm::dot(h, n), p)*I;
 			// }
 
-#ifdef REFRACTION
+ #ifdef REFRACTION
 			color += opacity*color_self;
-#else
+ #else
 			color += color_self;
-#endif
+ #endif
 		} // for lights
 //--------------------------  Lighting  -----------------------------//
-_SKIP_LIGHTING_:
 
 		if(recursionDepth < MAX_SHADE_RECURSION){
-#ifdef REFLECTION
+ #ifdef REFLECTION
 			// if(p>5){
 				const Ray & ray_reflection = Ray(intersection, glm::reflect(ray.dir, n), ray.inside_shape);
 				const vec3 & reflect_color = 
@@ -388,7 +382,7 @@ _SKIP_LIGHTING_:
 				color += reflect_color;
 			// }
 
-  #ifdef REFRACTION
+   #ifdef REFRACTION
 			if(opacity != 1){
 				/*
 					Air 1.0
@@ -422,10 +416,10 @@ _SKIP_LIGHTING_:
 				color += (1.0-opacity)*refract_color;
 			}
 		
-  #endif	
-#endif
+   #endif	
+ #endif
 		}
-
+#endif
 		return color;
 
 	} else {	// if not hit
