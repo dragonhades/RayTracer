@@ -248,14 +248,12 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
     double C = (origin.x * origin.x) + (origin.z * origin.z) - (m_radius*m_radius);
     double roots[2];
 
+    const double ymin = -m_length/2.0f;
+    const double ymax = m_length/2.0f;
 
     size_t num_roots = quadraticRoots(A, B, C, roots);
     CastResult result;
     if (num_roots == 0){
-
-
-	// TODO intersect 2 circles
-
 
 	float t1 = (m_length/2.0f-origin.y)/direction.y;
 	float t2 = (-m_length/2.0f-origin.y)/direction.y;
@@ -266,7 +264,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 	    double r2 = intersection.x*intersection.x + intersection.z*intersection.z; 
 	    if(r2 <= m_radius*m_radius) {
 		result.type = HitType::Primitive;
-		result.intersection = origin + (float)t1*direction;
+		result.intersection = intersection;
 		result.surface_normal = vec3(0, 1, 0);
 		result.t = t1;
 		result.pos = m_pos;
@@ -278,7 +276,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 	    double r2 = intersection.x*intersection.x + intersection.z*intersection.z;
 	    if(r2 <= m_radius*m_radius) {
 		result.type = HitType::Primitive;
-		result.intersection = origin + (float)t2*direction;
+		result.intersection = intersection;
 		result.surface_normal = vec3(0, -1, 0);
 		result.t = t2;
 		result.pos = m_pos;
@@ -290,9 +288,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
     } else if (num_roots == 1){
 
 	double t = roots[0];
-	double ymin = -m_length/2.0f;
-	double ymax = m_length/2.0f;
-	double y1 =origin.y + t * direction.y;
+	double y1 = origin.y + t * direction.y;
 
 	if (y1 >= ymin && y1 <= ymax){
 	    result.type = HitType::Primitive;
@@ -306,12 +302,13 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 	}
     }else{
 	//cout << "2 root: " << roots[0] << " " << roots[1] << endl;
+	
 	if (roots[0] < EPSILON && roots[1] < EPSILON) return result;
+	
 	double t;
+
 	if (roots[0] < EPSILON){
 	    t = roots[1];
-	    double ymin = -m_length/2.0f;
-	    double ymax = m_length/2.0f;
 	    double y1 = origin.y + t * direction.y;
 
 	    if (y1 >= ymin && y1 <= ymax){
@@ -327,8 +324,6 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 
 	}else if (roots[1] < EPSILON){
 	    t = roots[0];
-	    double ymin = -m_length/2.0f;
-	    double ymax = m_length/2.0f;
 	    double y1 = origin.y + t * direction.y;
 
 	    if (y1 >= ymin && y1 <= ymax){
@@ -343,8 +338,6 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 	    }
 	}else {
 	    double t=INT_MAX;
-	    double ymin = -m_length/2.0f;
-	    double ymax = m_length/2.0f;
 	    double y1 =origin.y + roots[0] * direction.y;
 	    if (y1 >= ymin && y1 <= ymax){
 		if(roots[0]<t) {
@@ -353,7 +346,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 		    result.surface_normal = vec3(result.intersection.x, 0, result.intersection.z);
 		}
 	    }
-	    double y2 =origin.y + roots[1] * direction.y;
+	    double y2 = origin.y + roots[1] * direction.y;
 	    if (y2 >= ymin && y2 <= ymax){
 		if(roots[1] < t) {
 		    t = roots[1];
@@ -365,7 +358,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 		if (roots[0]<roots[1]){
 		    // look up
 		    double ty = (ymin-origin.y)/direction.y;
-		    if (ty >=EPSILON && t > ty){
+		    if (ty > EPSILON && t > ty){
 			t = ty;
 			result.intersection = origin + (float)t * direction;
 			result.surface_normal = vec3(0, -1, 0);
@@ -376,7 +369,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 		if (roots[1] < roots[0]){
 		    // look up
 		    double ty = (ymin-origin.y)/direction.y;
-		    if (ty >=EPSILON && t > ty){
+		    if (ty > EPSILON && t > ty){
 			t = ty;
 			result.intersection = origin + (float)t * direction;
 			result.surface_normal = vec3(0, -1, 0);
@@ -387,7 +380,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 		if (roots[0]<roots[1]){
 		    // look down
 		    double ty = (ymax-origin.y)/direction.y;
-		    if (ty >=EPSILON && t > ty){
+		    if (ty > EPSILON && t > ty){
 			t = ty;
 			result.intersection = origin + (float)t * direction;
 			result.surface_normal = vec3(0, 1, 0);
@@ -398,15 +391,13 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 		if (roots[1] < roots[0]){
 		    // look down
 		    double ty = (ymax-origin.y)/direction.y;
-		    if (ty >=EPSILON && t > ty){
+		    if (ty > EPSILON && t > ty){
 			t = ty;
 			result.intersection = origin + (float)t * direction;
-			result.surface_normal = vec3(0, -1, 0);
+			result.surface_normal = vec3(0, 1, 0);
 		    }
 		}
 	    }
-
-
 
 	    if(t!=INT_MAX){
 		result.type = HitType::Primitive;
