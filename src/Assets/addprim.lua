@@ -19,7 +19,7 @@ c1 = gr.nh_cylinder('c1', {0, 0, 0}, 50, 100)
 scene_root:add_child(c1)
 c1:set_material(mat1)
 c1:rotate('x', 30)
---c1:rotate('z', -15)
+c1:rotate('z', -15)
 --c1:translate(200, 50, -100)
 c1:translate(-75, -125, 60)
 

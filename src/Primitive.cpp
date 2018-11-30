@@ -254,37 +254,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
     size_t num_roots = quadraticRoots(A, B, C, roots);
     CastResult result;
     if (num_roots == 0){
-
-	float t1 = (m_length/2.0f-origin.y)/direction.y;
-	float t2 = (-m_length/2.0f-origin.y)/direction.y;
-
-	if(t1>EPSILON && t1 < t2){
-	    // Top cap
-	    const vec3 & intersection = origin + t1*direction;
-	    double r2 = intersection.x*intersection.x + intersection.z*intersection.z; 
-	    if(r2 <= m_radius*m_radius) {
-		result.type = HitType::Primitive;
-		result.intersection = intersection;
-		result.surface_normal = vec3(0, 1, 0);
-		result.t = t1;
-		result.pos = m_pos;
-	    }
-	}
-	else if(t2>EPSILON && t2 < t1){
-	    // Bot cap
-	    const vec3 & intersection = origin + t2*direction;
-	    double r2 = intersection.x*intersection.x + intersection.z*intersection.z;
-	    if(r2 <= m_radius*m_radius) {
-		result.type = HitType::Primitive;
-		result.intersection = intersection;
-		result.surface_normal = vec3(0, -1, 0);
-		result.t = t2;
-		result.pos = m_pos;
-	    }
-	}
-
-	return result;
-
+	goto _caps_;
     } else if (num_roots == 1){
 
 	double t = roots[0];
@@ -298,13 +268,14 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 	    result.pos = m_pos;
 	    return result;
 	} else {
-	    return CastResult();
+	    DPRINT("2");
+	    goto _caps_;
 	}
     }else{
 	//cout << "2 root: " << roots[0] << " " << roots[1] << endl;
-	
-	if (roots[0] < EPSILON && roots[1] < EPSILON) return result;
-	
+
+	if (roots[0] < EPSILON && roots[1] < EPSILON) goto _caps_;
+
 	double t;
 
 	if (roots[0] < EPSILON){
@@ -319,7 +290,7 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 		result.pos = m_pos;
 		return result;
 	    } else {
-		return CastResult();
+		goto _caps_;
 	    }
 
 	}else if (roots[1] < EPSILON){
@@ -334,69 +305,33 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 		result.pos = m_pos;
 		return result;
 	    } else {
-		return CastResult();
+		goto _caps_;
 	    }
 	}else {
 	    double t=INT_MAX;
 	    double y1 =origin.y + roots[0] * direction.y;
-	    if (y1 >= ymin && y1 <= ymax){
-		if(roots[0]<t) {
-		    t = roots[0];
-		    result.intersection = origin + (float)t * direction;
-		    result.surface_normal = vec3(result.intersection.x, 0, result.intersection.z);
-		}
+	    if (y1 >= ymin && y1 <= ymax && roots[0]<t) {
+		t = roots[0];
+		result.intersection = origin + (float)t * direction;
+		result.surface_normal = vec3(result.intersection.x, 0, result.intersection.z);
+
 	    }
 	    double y2 = origin.y + roots[1] * direction.y;
-	    if (y2 >= ymin && y2 <= ymax){
-		if(roots[1] < t) {
-		    t = roots[1];
-		    result.intersection = origin + (float)t * direction;
-		    result.surface_normal = vec3(result.intersection.x, 0, result.intersection.z);
-		}
+	    if (y2 >= ymin && y2 <= ymax && roots[1] < t) {
+		t = roots[1];
+		result.intersection = origin + (float)t * direction;
+		result.surface_normal = vec3(result.intersection.x, 0, result.intersection.z);
 	    }
-	    if (y1 < ymin && y2 > ymin){
-		if (roots[0]<roots[1]){
-		    // look up
-		    double ty = (ymin-origin.y)/direction.y;
-		    if (ty > EPSILON && t > ty){
-			t = ty;
-			result.intersection = origin + (float)t * direction;
-			result.surface_normal = vec3(0, -1, 0);
-		    }
-		} 
+	    if (y1 < ymin && y2 > ymin && roots[0]<roots[1]
+		    || y2 < ymin && y1 > ymin && roots[1] < roots[0]){
+		// look up
+		goto _caps_;
+
 	    }
-	    else if (y2 < ymin && y1 > ymin){
-		if (roots[1] < roots[0]){
-		    // look up
-		    double ty = (ymin-origin.y)/direction.y;
-		    if (ty > EPSILON && t > ty){
-			t = ty;
-			result.intersection = origin + (float)t * direction;
-			result.surface_normal = vec3(0, -1, 0);
-		    }
-		}
-	    }
-	    else if (y1 > ymax && y2 < ymax){
-		if (roots[0]<roots[1]){
-		    // look down
-		    double ty = (ymax-origin.y)/direction.y;
-		    if (ty > EPSILON && t > ty){
-			t = ty;
-			result.intersection = origin + (float)t * direction;
-			result.surface_normal = vec3(0, 1, 0);
-		    }
-		}
-	    }
-	    else if (y2 > ymax && y1 < ymax){
-		if (roots[1] < roots[0]){
-		    // look down
-		    double ty = (ymax-origin.y)/direction.y;
-		    if (ty > EPSILON && t > ty){
-			t = ty;
-			result.intersection = origin + (float)t * direction;
-			result.surface_normal = vec3(0, 1, 0);
-		    }
-		}
+	    if (y1 > ymax && y2 < ymax && roots[0]<roots[1]
+		    || y2 > ymax && y1 < ymax && roots[1] < roots[0]){
+		// look down
+		goto _caps_;
 	    }
 
 	    if(t!=INT_MAX){
@@ -404,10 +339,42 @@ CastResult NonhierCylinder::intersect(const Ray & ray) {
 		result.t = t;
 		result.pos = m_pos;
 		return result;
-	    } else {
-		return CastResult();
 	    }
 	}
+
+_caps_:
+
+	    float t1 = (m_length/2.0f-origin.y)/direction.y;
+	    float t2 = (-m_length/2.0f-origin.y)/direction.y;
+
+	    if(t1>EPSILON && t1 < t2){
+		// Top cap
+		const vec3 & intersection = origin + t1*direction;
+		double r2 = intersection.x*intersection.x + intersection.z*intersection.z;
+		if(r2 <= m_radius*m_radius) {
+		    result.type = HitType::Primitive;
+		    result.intersection = intersection;
+		    result.surface_normal = vec3(0, 1, 0);
+		    result.t = t1;
+		    result.pos = m_pos;
+		    return result;
+		}
+	    }
+	    if(t2>EPSILON && t2 < t1){
+		// Bot cap
+		const vec3 & intersection = origin + t2*direction;
+		double r2 = intersection.x*intersection.x + intersection.z*intersection.z;
+		if(r2 <= m_radius*m_radius) {
+		    result.type = HitType::Primitive;
+		    result.intersection = intersection;
+		    result.surface_normal = vec3(0, -1, 0);
+		    result.t = t2;
+		    result.pos = m_pos;
+		    return result;
+		}
+	    }
+	    return CastResult();
+
+	
     }
-    return result;
 }

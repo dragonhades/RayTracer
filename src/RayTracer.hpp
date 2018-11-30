@@ -13,7 +13,7 @@
 #define PRINT_PROGRESS
 
 #define SSAA
-//#define REFLECTION
+#define REFLECTION
 //#define REFRACTION
 #define MAX_SHADE_RECURSION 6
 
