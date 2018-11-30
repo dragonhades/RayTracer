@@ -6,9 +6,13 @@ Robust CPU-based ray tracer. **STAR me** if you find it helpful... ⁽⁽٩(๑�
 
 _4K sample image_
 
-![CSG demo](images/csg.png)
+![](images/csg.png)
 
 _CSG demo_
+
+![](images/addprim.png)
+
+_Primitive : Cylinder_
 
 
 Compilation
@@ -32,6 +36,10 @@ Recursive reflection w/o distributed rays.
 ### Refraction
 
 Second iteraction.
+
+### Supported Primitives 
+
+sphere, cube, cylinder
 
 ### Constructive Solid Geometry
 
