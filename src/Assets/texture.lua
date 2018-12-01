@@ -8,7 +8,7 @@ mat1 = gr.material({0.7, 1.0, 0.7}, {0.5, 0.7, 0.5}, 25, 1)
 mat2 = gr.material({0.5, 0.5, 0.5}, {0.5, 0.7, 0.5}, 25, 1)
 mat3 = gr.material({1.0, 0.6, 0.1}, {0.5, 0.7, 0.5}, 25, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
-glass = gr.material({0.0, 0.0, 0.3}, {0.8, 0.8, 0.8}, 50, 0.0)
+glass = gr.material({0.0, 0.0, 0.2}, {0.8, 0.8, 0.8}, 50, 0.0)
 
 stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0, 1)
 grass = gr.material({0.1, 0.7, 0.1}, {0.0, 0.0, 0.0}, 0, 1)
@@ -29,9 +29,15 @@ s3 = gr.nh_sphere('s3', {0, -1800, -500}, 1000)
 scene:add_child(s3)
 s3:set_material(mat2)
 
-b1 = gr.nh_box('b1', {50, -125, 50}, 100)
+b1 = gr.nh_box('b1', {50, -125, 150}, 100)
 scene:add_child(b1)
 b1:set_material(mat4)
+
+c1 = gr.nh_cylinder('c1', {0, 0, 0}, 8, 200)
+scene:add_child(c1)
+c1:set_material(mat4)
+c1:rotate('z', -20);
+c1:translate(0, 0, 150)
 
 s4 = gr.nh_sphere('s4', {-100, 25, -300}, 50)
 scene:add_child(s4)
@@ -85,8 +91,9 @@ orange_light = gr.light({400.0, 100.0, 150.0}, {0.7, 0.5, 0.7}, {1, 0, 0})
 
 gr.render(scene, 'normal.png', 
 	-- 256, 256,
-	512, 512,
+	-- 512, 512,
 	-- 1024, 1024,
 	-- 1280, 1280,
+	2160, 2160,
 	  {0, 100, 800}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light, orange_light})
