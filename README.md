@@ -2,9 +2,13 @@ RayTracer Project
 ====================================================
 Robust CPU-based ray tracer. **STAR me** if you find it helpful... ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾  
 
+![](images/normal2K.png)
+
+_Water_Surface_
+
 ![](images/screenshot4K.png)
 
-_4K sample image_
+_Reflection & Refraction_
 
 ![](images/csg.png)
 
@@ -35,7 +39,7 @@ Recursive reflection w/o distributed rays.
 
 ### Refraction
 
-Second iteraction.
+Water refraction looks good.
 
 ### Supported Primitives 
 
