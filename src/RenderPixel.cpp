@@ -185,9 +185,9 @@ _shadow_ray_loop_:
 				double endRefractiveIndex;
 				if( ! ray.inside_shape){
 					startRefractiveIndex = 1.00;
-					endRefractiveIndex = 1.33;
+					endRefractiveIndex = 1.55;
 				} else {
-					startRefractiveIndex = 1.33;
+					startRefractiveIndex = 1.55;
 					endRefractiveIndex = 1.00;
 				}
 				// DPRINTVEC(n);
