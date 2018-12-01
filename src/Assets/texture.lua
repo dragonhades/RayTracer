@@ -33,7 +33,7 @@ b1 = gr.nh_box('b1', {50, -125, 150}, 100)
 scene:add_child(b1)
 b1:set_material(mat4)
 
-c1 = gr.nh_cylinder('c1', {0, 0, 0}, 8, 200)
+c1 = gr.nh_cylinder('c1', {0, 0, 0}, 8, 300)
 scene:add_child(c1)
 c1:set_material(mat4)
 c1:rotate('z', -20);
