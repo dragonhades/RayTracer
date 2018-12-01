@@ -6,7 +6,7 @@ Robust CPU-based ray tracer. **STAR me** if you find it helpful... ⁽⁽٩(๑�
 
 _Water_Surface_
 
-![](images/screenshot4K.png)
+![](images/nonhier4K.png)
 
 _Reflection & Refraction_
 
