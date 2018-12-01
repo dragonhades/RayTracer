@@ -216,8 +216,8 @@ _shadow_ray_loop_:
 
 		// background color
 		// return vec3(0.0*y / float(h), y*0.1 / float(h), y*0.4 / float(h));	// blue shading
-		return vec3(y / float(h), y*0.1 / float(h), y*0.3 / float(h));	// red shading
-		// return vec3(0.5*y / float(h));	// white shading
+		// return vec3(y / float(h), y*0.1 / float(h), y*0.3 / float(h));	// red shading
+		return vec3(0.5*y / float(h));	// white shading
 
 		// return vec3(0.3, 0.02, 0.05);	// red
 

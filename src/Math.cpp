@@ -42,7 +42,7 @@ glm::vec3 get_refract(
    double cos = -dot(normal, direction);
    double root_term = q*q * (1.0 - cos*cos);
 
-   if (1.0 - root_term < 0) {
+   if (root_term > 1){
       return vec3(0);
    }
 
