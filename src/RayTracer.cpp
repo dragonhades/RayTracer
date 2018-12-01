@@ -71,7 +71,8 @@ void Render(
 	// apply viewMatrix this way
 	root->translate(-eye);
 	for(Light* l : lights){
-		l->position = vec3( translate(-eye) * vec4(l->position, 1) );
+		// l->position = vec3( translate(-eye) * root->get_transform()* vec4(l->position, 1) );
+		l->position = vec3( translate(-eye) * vec4(l->position, 1) );	
 	}
 
 
