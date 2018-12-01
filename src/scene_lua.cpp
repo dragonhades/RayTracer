@@ -618,7 +618,6 @@ static const luaL_Reg grlib_functions[] = {
 // the appropriate member functions (e.g. gr_node_set_material_cmd
 // ensures that the node is a GeometryNode, see above).
 static const luaL_Reg grlib_node_methods[] = {
-<<<<<<< HEAD
   {"__gc", gr_node_gc_cmd},
   {"add_child", gr_node_add_child_cmd},
   {"set_material", gr_node_set_material_cmd},
@@ -628,16 +627,6 @@ static const luaL_Reg grlib_node_methods[] = {
   {"translate", gr_node_translate_cmd},
   {"render", gr_render_cmd},
   {0, 0}
-=======
-    {"__gc", gr_node_gc_cmd},
-    {"add_child", gr_node_add_child_cmd},
-    {"set_material", gr_node_set_material_cmd},
-    {"scale", gr_node_scale_cmd},
-    {"rotate", gr_node_rotate_cmd},
-    {"translate", gr_node_translate_cmd},
-    {"render", gr_render_cmd},
-    {0, 0}
->>>>>>> 11e545206887c1fad3a14f902817b0829e89b0db
 };
 
 // This function calls the lua interpreter to define the scene and

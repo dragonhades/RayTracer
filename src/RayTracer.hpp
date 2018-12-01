@@ -14,11 +14,7 @@
 
 #define SSAA
 #define REFLECTION
-<<<<<<< HEAD
 #define REFRACTION
-=======
-//#define REFRACTION
->>>>>>> 11e545206887c1fad3a14f902817b0829e89b0db
 #define MAX_SHADE_RECURSION 6
 
 // #define DRAW_BBOX
