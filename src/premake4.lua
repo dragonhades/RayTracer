@@ -4,7 +4,8 @@ includeDirList = {
     "../shared",
     "../shared/include",
     "../shared/gl3w",
-    "../shared/imgui"
+    "../shared/imgui",
+    "../shared/lodepng"
 }
 
 libDirectories = { 

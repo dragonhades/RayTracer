@@ -186,12 +186,12 @@ glm::vec3 shading(
 
 				double startRefractiveIndex;
 				double endRefractiveIndex;
-				if(ray.inside_shape){
-					startRefractiveIndex = 1.33;
-					endRefractiveIndex = 1.00;
-				} else {
+				if( ! ray.inside_shape){
 					startRefractiveIndex = 1.00;
 					endRefractiveIndex = 1.33;
+				} else {
+					startRefractiveIndex = 1.33;
+					endRefractiveIndex = 1.00;
 				}
 				
 				const vec3 & refract_dir = get_refract(n, ray.dir, startRefractiveIndex, endRefractiveIndex);

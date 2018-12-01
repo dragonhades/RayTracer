@@ -8,13 +8,13 @@
 #include "Light.hpp"
 #include "Image.hpp"
 
-#define NUM_THREADS 8
+#define NUM_THREADS 32
 #define MTHREAD
 #define PRINT_PROGRESS
 
 #define SSAA
-// #define REFLECTION
-// #define REFRACTION
+#define REFLECTION
+#define REFRACTION
 #define MAX_SHADE_RECURSION 6
 
 // #define DRAW_BBOX
