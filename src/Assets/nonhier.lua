@@ -12,9 +12,13 @@ s1 = gr.nh_sphere('s1', {50, 0, -400}, 100)
 scene_root:add_child(s1)
 s1:set_material(mat1)
 
-s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
+s2 = gr.nh_sphere('s2', {300, 50, -100}, 150)
 scene_root:add_child(s2)
 s2:set_material(glass)
+
+s22 = gr.nh_sphere('s22', {250, 250, -450}, 150)
+scene_root:add_child(s22)
+s22:set_material(mat1)
 
 s3 = gr.nh_sphere('s3', {0, -1200, -500}, 1000)
 scene_root:add_child(s3)
@@ -46,10 +50,10 @@ orange_light = gr.light({400.0, 100.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 
 gr.render(scene_root, 'nonhier.png', 
 	-- 256, 256,
-	480, 270,
+	-- 480, 270,
 	-- 640, 360,
 	-- 1280, 720,
-	-- 3840, 2160,
+	3840, 2160,
 
 	  {0, 0, 550},
 	  -- {0, 0, 750},
