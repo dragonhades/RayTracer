@@ -2,7 +2,7 @@ RayTracer Project
 ====================================================
 Robust CPU-based ray tracer. **STAR me** if you find it helpful... ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾  
 
-![](images/texture.png)
+![](images/texture4K.png)
 
 _Water_Surface_
 
