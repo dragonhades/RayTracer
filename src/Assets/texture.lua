@@ -6,6 +6,7 @@
 
 green = gr.material({0.7, 1.0, 0.7}, {0.5, 0.7, 0.5}, 25, 1)
 gray = gr.material({0.5, 0.5, 0.5}, {0.1, 0.2, 0.1}, 3, 1)
+dgray = gr.material({0.2, 0.2, 0.2}, {0.1, 0.2, 0.1}, 3, 1)
 yellow = gr.material({1.0, 0.6, 0.1}, {0.5, 0.7, 0.5}, 25, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
 blue = gr.material({0.1, 0.1, 0.3}, {0.1, 0.2, 0.1}, 3, 1)
@@ -57,12 +58,11 @@ water:set_normalmap("sea_normal.png")
 water:scale(500, 40, 500)
 water:translate(0, 50, 0)
 
--- test = gr.cube('test')
--- scene:add_child(test)
--- test:set_material(yellow)
--- test:set_normalmap("sea_normal.png")
--- test:scale(1000, 200, 1000)
--- test:translate(-500, -250, -500)
+test = gr.cube('test')
+scene:add_child(test)
+test:set_material(dgray)
+test:scale(1000, 1, 1000)
+test:translate(-500, -100, -500)
 
 -- plane = gr.mesh('plane', 'plane.obj' )
 -- scene:add_child(plane)
@@ -148,9 +148,9 @@ gr.render(scene, 'texture.png',
 	-- 2160, 2160,
 
 		-- 256, 256,
-	-- 480, 270,
+	480, 270,
 	-- 640, 360,
 	-- 1280, 720,
-	3840, 2160,
-	  {0, -275, 700}, {0, 0, -1}, {0, 1, 0}, 50,
+	-- 3840, 2160,
+	  {0, -275, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light, orange_light})
