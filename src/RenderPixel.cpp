@@ -92,7 +92,11 @@ glm::vec3 shading(
 
 		/** Phong illumination **/
 		PhongMaterial* phong = (PhongMaterial*) gnode->m_material;
-		const vec3 & kd = phong->m_kd;
+		vec3 kd;
+		// if(phong->has_normalmap())
+		// 	kd = phong->normal(result.intersection_prime.x, result.intersection_prime.z);
+		// else 
+			kd = phong->m_kd;
 		const vec3 & ks = phong->m_ks;
 		const double & p = phong->m_shininess;
 		const double & opacity = phong->m_opacity;
@@ -126,37 +130,30 @@ glm::vec3 shading(
 			// const vec3 & h = (v + light_dir) / absVec3(v + light_dir);
 
 			Ray shadowRay(intersection, light_dir, ray.inside_shape);
-			const CastResult & shadowRay_result = intersectScene(shadowRay);
+			CastResult shadowRay_result = intersectScene(shadowRay);
 
 			vec3 color_self;
 
-			if(shadowRay_result.isHit()) continue;	// discard;
+_shadow_ray_loop_:
+			if(shadowRay_result.isHit()){
+				PhongMaterial* mat = (PhongMaterial*) shadowRay_result.gnode->m_material;
+				if(mat){
+					if(mat->m_opacity != 0.0) // if object is not transparent;
+						continue;	// discard;
+					else {
+						shadowRay = Ray(shadowRay_result.intersection, light_dir, ray.inside_shape);
+						shadowRay_result = intersectScene(shadowRay);
+						goto _shadow_ray_loop_;
+					}
+				} else {
+					continue;
+				}
+			} 
+				
 			color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
 						+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
 						// + ks*std::pow(glm::dot(h, n), p)*I;
 
-		// TODO 
-
-			//The intersectScene is repeated during following call...  
-			// Get rid of it
-
-		// TODO 
-
-			// seg fault
-
-			// if(shadowRay_result.isHit() && 
-			// 	glm::distance(shadowRay_result.intersection, intersection) <= light_distance)
-			// {
-			// 	PhongMaterial* material = (PhongMaterial*) shadowRay_result.geoNode->m_material;
-			// 	if(material->m_opacity != 1){
-			// 		color_self = 0.5*ks*shading(Ray(shadowRay_result.intersection, shadowRay.dir), 
-			// 			1, x, y, w, h,root, ambient, lights);
-			// 	}
-			// } else {
-			// 	color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
-			// 			+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
-			// 			// + ks*std::pow(glm::dot(h, n), p)*I;
-			// }
 
  #ifdef REFRACTION
 			color += opacity*color_self;
@@ -174,8 +171,8 @@ glm::vec3 shading(
 					0.5 * ks * shading(ray_reflection, recursionDepth + 1, node, x, y, w, h, ambient, lights);
 				color += reflect_color;
 			// }
-
-   #ifdef REFRACTION
+ #endif
+ #ifdef REFRACTION
 			if(opacity != 1){
 				/*
 					Air 1.0
@@ -193,10 +190,10 @@ glm::vec3 shading(
 					startRefractiveIndex = 1.33;
 					endRefractiveIndex = 1.00;
 				}
-				
-				const vec3 & refract_dir = get_refract(n, ray.dir, startRefractiveIndex, endRefractiveIndex);
-				// const Ray & ray_transmition = Ray(intersection, ray.dir);
+				const vec3 & refract_dir = glm::normalize(get_refract(n, normalize(ray.dir), startRefractiveIndex, endRefractiveIndex));
+				if(refract_dir == vec3(0)) return color;
 				const Ray & ray_transmition = Ray(intersection, refract_dir, !ray.inside_shape);
+
 				vec3 refract_color;
 				if(ray.inside_shape){
 					refract_color = 0.8 * ks*
@@ -209,8 +206,7 @@ glm::vec3 shading(
 				color += (1.0-opacity)*refract_color;
 			}
 		
-   #endif	
- #endif
+ #endif	
 		}
 #endif
 		return color;

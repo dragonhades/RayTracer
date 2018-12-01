@@ -31,45 +31,61 @@ using namespace std;
 
 // http://graphicscodex.com
 //    Material - Transmission and Refraction
-// glm::vec3 get_refract(
-//               const vec3 & normal, 
-//               const vec3 & direction,
-//               double n1, 
-//               double n2
-// ) {
-//   // invert normal if we shoot ray from inside to outside of a solid... 
-//   // vec3 normal = surface_normal;
-//   // if(dot(normal, direction) > 0) {
-//   //   normal = -normal;
-//   //   // std::swap(n1, n2);   // this is magically unnecessary
-//   // }
-
-//    double q = n1 / n2;
-//    double cos = -dot(normal, direction);
-//    double root_term = q*q * (1.0 - cos*cos);
-
-//    if (1.0 - root_term < 0) {
-//       cerr << "sqrt negative value." << endl;
-//       exit(EXIT_FAILURE);
-//    }
-
-//    double root = sqrt(1.0 - root_term);
-//    return direction * q + normal * (q * cos - root);
-// }
-
-// https://stackoverflow.com/questions/42218704/how-to-properly-handle-refraction-in-raytracing
 glm::vec3 get_refract(
               const vec3 & normal, 
               const vec3 & direction,
               double n1, 
               double n2
-)
-{
-  double eta = n1 / n2;
-    eta = 2.0f - eta;
-    float cosi = dot(normal, direction);
-    return direction * eta - normal * (-cosi + eta * cosi);
+) {
+
+   double q = n1 / n2;
+   double cos = -dot(normal, direction);
+   double root_term = q*q * (1.0 - cos*cos);
+
+   if (1.0 - root_term < 0) {
+      return vec3(0);
+   }
+
+   double root = sqrt(1.0 - root_term);
+   return direction * q + normal * (q * cos - root);
 }
+
+// https://stackoverflow.com/questions/42218704/how-to-properly-handle-refraction-in-raytracing
+// glm::vec3 get_refract(
+//               const vec3 & normal, 
+//               const vec3 & direction,
+//               double n1, 
+//               double n2
+// )
+// {
+//   double eta = n1 / n2;
+//     eta = 2.0f - eta;
+//     float cosi = dot(normal, direction);
+//     return direction * eta - normal * (-cosi + eta * cosi);
+// }
+
+// https://github.com/chinux23/CS488-Ray-Tracer/blob/master/A4/A4.cpp
+// glm::vec3 get_refract(
+//               const vec3 & normal, 
+//               const vec3 & direction,
+//               double n1, 
+//               double n2
+// ){
+  
+//     double nr = n1 / n2;
+
+//     double cosineTheta_i = -glm::dot(normal, direction);
+//     double sineTheta_i_t2 = 1 - cosineTheta_i * cosineTheta_i;
+//     double sineTheta_t_t2 = nr * nr * sineTheta_i_t2;
+  
+//     if (sineTheta_t_t2 > 1) {
+//         // Total internal reflection.
+//       return vec3(0);
+//     }
+  
+// //    auto direction = (nr * cosineTheta_i - sqrt(1 - sineTheta_t_t2)) * intersection.normal - nr * ray.direction;
+//   return nr * direction + (nr * cosineTheta_i - sqrt(1 - sineTheta_t_t2)) * normal;
+// }
 
 float absVec3(const vec3 & vec){
    float value = 0.0;

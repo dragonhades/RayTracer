@@ -38,18 +38,22 @@ Mesh::Mesh( const std::string& fname )
 			m_faces.push_back( Triangle( s1 - 1, s2 - 1, s3 - 1 ) );
 		}
 	}
-	m_bboxTrans = getBBoxTrans();
+	if (fname == "plane.obj" || fname == "Assets/plane.obj") {
+		m_bboxTrans = glm::mat4();
+	} else {
+		m_bboxTrans = getBBoxTrans();
+	}
 }
 
 CastResult Mesh::intersect(const Ray & ray){
 #define USE_BBOX
 #ifdef USE_BBOX
+
 	// get bbox
-	if(m_vertices.empty()) {
-		DASSERT(m_vertices.empty() == false, "Mesh is empty.");
-		return CastResult();
-	}
-	// DPRINTVEC(m_bboxTrans);
+	DASSERT(m_vertices.empty() == false, "Mesh is empty.");
+
+	// objects like surface plane does not need bbox 
+	if(m_bboxTrans == glm::mat4()) return intersectTriangles(ray);
 
 	Ray ray_copy = ray;
 	ray_copy.setTransform(m_bboxTrans);
@@ -57,7 +61,6 @@ CastResult Mesh::intersect(const Ray & ray){
 	CastResult result = cube.intersect(ray_copy);
 	if(result.isHit()){
 		result.type = HitType::BBox;
-		// DCOUNT("hit bbox");
 		return result;
 	} else {
 		return CastResult();
@@ -120,7 +123,7 @@ CastResult Mesh::intersectTriangles(const Ray & ray){
 	CastResult result;
 	result.type = HitType::Triangle;
 	result.intersection = rayOrigin + (float)t_min*rayVector;
-	result.surface_normal = normalize(getNormal(*tri_min));
+	result.surface_normal = getNormal(*tri_min);
 	result.t = t_min;
 
 	return result;

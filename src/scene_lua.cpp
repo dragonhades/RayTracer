@@ -426,28 +426,6 @@ int gr_material_cmd(lua_State* L)
     return 1;
 }
 
-// Create a normal map
-extern "C"
-int gr_nmap_cmd(lua_State* L)
-{
-  GRLUA_DEBUG_CALL;
-  
-  gr_material_ud* data = (gr_material_ud*)lua_newuserdata(L, sizeof(gr_material_ud));
-  data->material = 0;
-  
-  const char* name = luaL_checkstring(L, 1);
-
-  if(data->material==nullptr){
-    std::cerr<<"material does not exist"<<std::endl;
-  }
-  
-  data->material->add_normalmap(name);
-
-  luaL_newmetatable(L, "gr.material");
-  lua_setmetatable(L, -2);
-  
-  return 1;
-}
 
 // Add a Child to a node
     extern "C"
@@ -490,6 +468,33 @@ int gr_node_set_material_cmd(lua_State* L)
 
     self->setMaterial(material);
 
+    return 0;
+}
+
+// Create a normal map
+extern "C"
+int gr_node_set_nmap_cmd(lua_State* L)
+{
+    GRLUA_DEBUG_CALL;
+
+    gr_node_ud* selfdata = (gr_node_ud*)luaL_checkudata(L, 1, "gr.node");
+    luaL_argcheck(L, selfdata != 0, 1, "Node expected");
+
+    GeometryNode* self = dynamic_cast<GeometryNode*>(selfdata->node);
+
+    luaL_argcheck(L, self != 0, 1, "Geometry node expected");
+
+    Material* mat = self->m_material;
+  
+    const char* name = luaL_checkstring(L, 2);
+
+    if(mat==nullptr){
+      std::cerr<<"normalmap does not exist"<<std::endl;
+      return 1;
+    }
+    
+    mat->add_normalmap(name);
+  
     return 0;
 }
 
@@ -621,7 +626,7 @@ static const luaL_Reg grlib_node_methods[] = {
   {"__gc", gr_node_gc_cmd},
   {"add_child", gr_node_add_child_cmd},
   {"set_material", gr_node_set_material_cmd},
-  {"set_normalmap", gr_nmap_cmd},
+  {"set_normalmap", gr_node_set_nmap_cmd},
   {"scale", gr_node_scale_cmd},
   {"rotate", gr_node_rotate_cmd},
   {"translate", gr_node_translate_cmd},

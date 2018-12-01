@@ -234,13 +234,11 @@ void Render_Thread(
 		{
 			std::lock_guard<std::mutex> progressBar_lck (progress_mutx);
 		
-			old_percent = progress;
 			progress ++;
 			new_percent = int(progress / float(w*h) *100.0f);		
 
 		// This has potential sychornization problem, but it's okay; we just want to see percentage going up... 
-			if(new_percent!= old_percent)
-				cout << "[               " << new_percent << " %               ]\r";
+			cout << "[               " << new_percent << " %               ]\r";
 		}
 		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */	
 	#endif
