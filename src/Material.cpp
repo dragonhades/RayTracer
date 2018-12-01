@@ -15,8 +15,13 @@ Material::~Material()
 {}
 
 void Material::add_normalmap(const std::string & filename) {
-	unsigned error = lodepng::decode(m_nmap, m_nmap_width, m_nmap_height, filename);
-	DASSERT(error==0, lodepng_error_text(error));
+	std::string fname = std::string("./Assets/").append(filename);
+	unsigned error = lodepng::decode(m_nmap, m_nmap_width, m_nmap_height, fname);
+ 	if(error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+
+	DASSERT(m_nmap.size()>0, "empty normal map");
+
+	m_has_normal = true;
 }
 
 vec3 Material::normal(double u, double v){
@@ -30,6 +35,8 @@ vec3 Material::normal(double u, double v){
     
     int position = pixel_y * m_nmap_width + pixel_x;
     position = position * 4;
-    
-	return glm::vec3(m_nmap[position] / 255.0, m_nmap[position + 1] / 255.0, m_nmap[position + 2] / 255.0);
+    vec3 nmap = vec3(m_nmap[position], m_nmap[position + 1], m_nmap[position + 2]);
+    nmap = vec3( (nmap.x-127.0f)/255.0f, (nmap.y-127.0f)/255.0f, (nmap.x-255.0f)/255.0f);
+
+	return glm::normalize(nmap);
 }
