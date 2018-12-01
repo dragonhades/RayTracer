@@ -32,8 +32,8 @@ using namespace std;
 // http://graphicscodex.com
 //    Material - Transmission and Refraction
 glm::vec3 get_refract(
-              const vec3 & normal, 
-              const vec3 & direction,
+              const dvec3 & normal, 
+              const dvec3 & direction,
               double n1, 
               double n2
 ) {

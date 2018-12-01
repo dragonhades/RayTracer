@@ -459,6 +459,21 @@ int gr_node_set_material_cmd(lua_State* L)
 
     GeometryNode* self = dynamic_cast<GeometryNode*>(selfdata->node);
 
+    // const char* name = luaL_checkstring(L, 2);
+
+    // if(name){
+    //     Material* mat = self->m_material;
+  
+    //     const char* name = luaL_checkstring(L, 2);
+
+    //     if(mat==nullptr){
+    //       std::cerr<<"material does not exist"<<std::endl;
+    //       return 1;
+    //     }
+        
+    //     mat->add_normalmap(name);
+    // }
+
     luaL_argcheck(L, self != 0, 1, "Geometry node expected");
 
     gr_material_ud* matdata = (gr_material_ud*)luaL_checkudata(L, 2, "gr.material");
@@ -489,7 +504,7 @@ int gr_node_set_nmap_cmd(lua_State* L)
     const char* name = luaL_checkstring(L, 2);
 
     if(mat==nullptr){
-      std::cerr<<"normalmap does not exist"<<std::endl;
+      std::cerr<<"material does not exist"<<std::endl;
       return 1;
     }
     

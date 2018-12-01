@@ -25,10 +25,9 @@ void CastResult::transform() {
     trans *= glm::translate(pos);
 
     if(gnode->m_material->has_normalmap()){
-    	surface_normal = glm::normalize(surface_normal);
-		const vec3 & n_map = gnode->m_material->normal(intersection.x, intersection.z)*1.5;
-		const vec3 & subtract = surface_normal - vec3(0, 0, 1);
-		this->surface_normal = n_map + subtract;
+		const vec3 & n_map = gnode->m_material->normal(intersection.x, intersection.z);
+		const vec3 & subtract = glm::normalize(surface_normal) - vec3(0, 0, -1);
+		this->surface_normal = glm::normalize(n_map + subtract);
     }
 
     this->intersection = glm::vec3( trans*glm::vec4(intersection, 1) );

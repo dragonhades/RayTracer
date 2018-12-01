@@ -35,6 +35,8 @@ vec3 Material::normal(double u, double v){
     
     int position = pixel_y * m_nmap_width + pixel_x;
     position = position * 4;
-    
-	return glm::normalize(glm::vec3(m_nmap[position], m_nmap[position + 1], m_nmap[position + 2])/255.0f);
+    vec3 nmap = vec3(m_nmap[position], m_nmap[position + 1], m_nmap[position + 2]);
+    nmap = vec3( (nmap.x-127.0f)/255.0f, (nmap.y-127.0f)/255.0f, (nmap.x-255.0f)/255.0f);
+
+	return glm::normalize(nmap);
 }

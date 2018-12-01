@@ -140,11 +140,11 @@ _shadow_ray_loop_:
 				if(mat){
 					if(mat->m_opacity != 0.0) // if object is not transparent;
 						continue;	// discard;
-					else {
-						shadowRay = Ray(shadowRay_result.intersection, light_dir, ray.inside_shape);
-						shadowRay_result = intersectScene(shadowRay);
-						goto _shadow_ray_loop_;
-					}
+					// else {
+					// 	shadowRay = Ray(shadowRay_result.intersection, light_dir, ray.inside_shape);
+					// 	shadowRay_result = intersectScene(shadowRay);
+					// 	goto _shadow_ray_loop_;
+					// }
 				} else {
 					continue;
 				}
@@ -190,6 +190,7 @@ _shadow_ray_loop_:
 					startRefractiveIndex = 1.33;
 					endRefractiveIndex = 1.00;
 				}
+				// DPRINTVEC(n);
 				const vec3 & refract_dir = glm::normalize(get_refract(n, normalize(ray.dir), startRefractiveIndex, endRefractiveIndex));
 				if(refract_dir == vec3(0)) return color;
 				const Ray & ray_transmition = Ray(intersection, refract_dir, !ray.inside_shape);

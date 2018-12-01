@@ -13,7 +13,7 @@ Texture::Texture(const std::string & textureName)
     unsigned error = lodepng::decode(m_image, m_width, m_height, textureName);
     if(error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     
-    DASSERT(m_nmap.size()>0, "empty normal map");
+    DASSERT(m_image.size()>0, "empty normal map");
 }
 
 Texture::~Texture()
