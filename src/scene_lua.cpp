@@ -56,6 +56,7 @@
 #include "Primitive.hpp"
 #include "Material.hpp"
 #include "PhongMaterial.hpp"
+#include "Texture.hpp"
 #include "RayTracer.hpp"
 
 typedef std::map<std::string,Mesh*> MeshMap;
@@ -459,25 +460,18 @@ int gr_node_set_material_cmd(lua_State* L)
 
     GeometryNode* self = dynamic_cast<GeometryNode*>(selfdata->node);
 
+    luaL_argcheck(L, self != 0, 1, "Geometry node expected");
+
+
     // const char* name = luaL_checkstring(L, 2);
 
     // if(name){
-    //     Material* mat = self->m_material;
-  
-    //     const char* name = luaL_checkstring(L, 2);
-
-    //     if(mat==nullptr){
-    //       std::cerr<<"material does not exist"<<std::endl;
-    //       return 1;
-    //     }
-        
-    //     mat->add_normalmap(name);
+    //     self->m_material = new Texture(name);
+    //     return 0;
     // }
 
-    luaL_argcheck(L, self != 0, 1, "Geometry node expected");
-
     gr_material_ud* matdata = (gr_material_ud*)luaL_checkudata(L, 2, "gr.material");
-    luaL_argcheck(L, matdata != 0, 2, "Material expected");
+    // luaL_argcheck(L, matdata != 0, 2, "Material expected");
 
     Material* material = matdata->material;
 
@@ -527,7 +521,7 @@ int gr_node_scale_cmd(lua_State* L)
     double values[3];
 
     for (int i = 0; i < 3; i++) {
-	values[i] = luaL_checknumber(L, i + 2);
+	   values[i] = luaL_checknumber(L, i + 2);
     }
 
     self->scale(glm::vec3(values[0], values[1], values[2]));

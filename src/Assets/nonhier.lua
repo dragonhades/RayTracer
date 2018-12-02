@@ -18,7 +18,7 @@ s2:set_material(glass)
 
 s22 = gr.nh_sphere('s22', {250, 250, -450}, 150)
 scene_root:add_child(s22)
-s22:set_material(mat1)
+s22:set_material(mat3)
 
 s3 = gr.nh_sphere('s3', {0, -1200, -500}, 1000)
 scene_root:add_child(s3)
@@ -26,12 +26,12 @@ s3:set_material(mat2)
 
 b1 = gr.nh_box('b1', {0, 0, 0}, 100)
 scene_root:add_child(b1)
-b1:rotate('y', 35)
+b1:rotate('y', 65)
 b1:rotate('x', 23)
-b1:translate(-75, -125, 60)
+b1:translate(-75, -95, 60)
 b1:set_material(glass)
 
-s4 = gr.nh_sphere('s4', {-100, 25, -300}, 50)
+s4 = gr.nh_sphere('s4', {-120, -50, -400}, 100)
 scene_root:add_child(s4)
 s4:set_material(mat3)
 
