@@ -192,7 +192,12 @@ _shadow_ray_loop_:
 				}
 				// DPRINTVEC(n);
 				const vec3 & refract_dir = glm::normalize(get_refract(n, normalize(ray.dir), startRefractiveIndex, endRefractiveIndex));
-				if(refract_dir == vec3(0)) return color;
+				
+				// Total internal reflection
+				//  But we've done it already
+				if(refract_dir == vec3(0)) return color; 
+				
+
 				const Ray & ray_transmition = Ray(intersection, refract_dir, !ray.inside_shape);
 
 				vec3 refract_color;

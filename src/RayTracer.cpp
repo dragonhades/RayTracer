@@ -92,13 +92,11 @@ void Render(
 		} 
 	}
 
-#ifdef MTHREAD
+
 	int num_cores = std::thread::hardware_concurrency();
-	cout <<"Multi-threading..." << endl;
 	cout << "Using " << num_cores << " cores,"<< "\t"
 		<< NUM_THREADS << " threads." <<endl;
 	vector<std::thread> threads(NUM_THREADS);
-#endif
 
 
 #define loop
@@ -113,7 +111,6 @@ void Render(
 	color_chart[y][x] = color;	// should be redundant
 #else
 
- #ifdef MTHREAD
 	for(int i=0; i<NUM_THREADS; ++i){
 		threads[i] = std::thread(Render_Thread, 
 			 w, h, eye, view, up, fovy, ambient, lights);
@@ -126,25 +123,6 @@ void Render(
 	for(int i=0; i<NUM_THREADS; ++i){
 		threads[i].join();
 	}
-
- #else 
-	cout <<"Single thread." << endl;
-
-	for(register int y=0; y < h; ++y){
-		for(register int x=0; x < w; ++x){
-			
-			color_chart[y][x] = Render_Pixel(x, y, w, h, fovy, ambient, lights);
-
-#ifdef PRINT_PROGRESS
-			progress ++;
-			int new_percent = int(progress / float(w*h) *100.0f);
-			cout << "[               " << new_percent << " %               ]\r";
-#endif
-		}
-	}
-
- #endif
-
 
 #endif
 
