@@ -38,7 +38,7 @@ void Photon_Mapping(
 		const vec3 & org = l->position;
 		const vec3 & dir = p - org;
 
-		const Ray ray(org, dir);
+		const Ray ray(org, dir, false);
 		const CastResult & result = intersectScene(ray, root); 
 
 		if(result.isHit()){
