@@ -8,8 +8,11 @@
 #include <mutex>
 
 #include "RayTracer.hpp"
+#include "RenderPixel.hpp"
+#include "PhotonMapping.hpp"
 #include "DEBUG.hpp"
 #include "SceneNode.hpp"
+#include "Intersect.hpp"
 
 using namespace glm;
 using namespace std;
@@ -23,9 +26,13 @@ int progress = 0;
 std::mutex progress_mutx;
 
 SceneNode * root;
-
 vector<vector<vec3>> color_chart;
+vector<vector<vec3>> photonMap_chart;
 
+int photon_w;
+int photon_h;
+int photon_dw;
+int photon_dh;
 // ---------------------GLOBALS------------------------//
 
 void Render(
@@ -83,7 +90,7 @@ void Render(
 	h++;
 	w++;
 	cout << "Super Sampling Enabled." << endl;
-#endif
+#endif	//SSAA
 
 	for (register uint y = 0; y < h; ++y) {
 		color_chart.emplace_back();
@@ -97,6 +104,54 @@ void Render(
 	cout << "Using " << num_cores << " cores,"<< "\t"
 		<< NUM_THREADS << " threads." <<endl;
 	vector<std::thread> threads(NUM_THREADS);
+
+
+#ifdef PHOTON_MAPPING
+
+	mat4 t;
+	const SceneNode* photon_surface = findNode(root, "ground", t);
+	DASSERT(photon_surface!=nullptr, "null");
+
+	photon_w = 1000;
+	photon_h = 1000;
+	photon_dw = 400;
+	photon_dh = 400;
+
+	/*
+		Note: possible hit point range from 0 to photon_dw/photon_dh, 
+				hence plus one is crucial
+	*/
+	for (register uint y = 0; y < photon_dh+1; ++y) {
+		photonMap_chart.emplace_back();
+		for (register uint x = 0; x < photon_dw+1; ++x){
+			photonMap_chart[y].emplace_back();
+			photonMap_chart[y][x] = vec3(0);
+		}
+	}
+
+	std::cout << "Compute Photon Mapping ..."<<std::endl;
+
+
+	for(int i=0; i<NUM_THREADS; ++i){
+		threads[i] = std::thread(PhotonMap_Thread, photon_surface, lights);
+		if(threads[i].get_id() == std::thread::id()) {
+		     std::cerr << "Abort: Failed to create thread " << i << std::endl;
+			 exit(EXIT_FAILURE);
+		}
+	}
+
+	for(int i=0; i<NUM_THREADS; ++i){
+		threads[i].join();
+	}
+
+	global_x = 0;
+	global_y = 0;
+	progress = 0;
+
+#endif	// PHOTON_MAPPING
+
+	std::cout << std::endl;
+	std::cout << "Rendering ..."<<std::endl;
 
 
 #define loop
@@ -215,6 +270,61 @@ void Render_Thread(
 		
 			progress ++;
 			new_percent = int(progress / float(w*h) *100.0f);		
+
+		// This has potential sychornization problem, but it's okay; we just want to see percentage going up... 
+			cout << "[               " << new_percent << " %               ]\r";
+		}
+		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */	
+	#endif
+
+	} // while true
+}
+
+void PhotonMap_Thread(
+		// Lighting parameters  
+		const SceneNode* target,
+		const std::list<Light *> lights
+) {
+
+	// Work, until no work available
+	while(true){	
+
+		int x, z;
+
+		/* xxxxxxxxxxxxxxxxxxxxx Critical section begin xxxxxxxxxxxxxxxxxxxxx */
+		{
+			// Multi-threading
+			//  Use global x and y to assign task to each thread.
+			//  In every loop, fetch next x, y and move them one pixel to the right
+			//  As result, each thread will always be busy. 
+			std::lock_guard<std::mutex> xy_lck (xy_mutx);
+
+			if(global_y >= photon_h) return;
+
+			x = global_x;
+			z = global_y;
+			global_x++;
+			if(global_x == photon_w){
+				global_x = 0;
+				global_y++;
+			}
+			if(global_y >= photon_h) return;
+		}
+		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */
+
+
+		Photon_Mapping(x, z, target, lights);
+
+		int new_percent;
+		int old_percent;
+
+	#ifdef PRINT_PROGRESS
+		/* xxxxxxxxxxxxxxxxxxxxx Critical section begin xxxxxxxxxxxxxxxxxxxxx */
+		{
+			std::lock_guard<std::mutex> progressBar_lck (progress_mutx);
+		
+			progress ++;
+			new_percent = int(progress / float(photon_w*photon_h) *100.0f);		
 
 		// This has potential sychornization problem, but it's okay; we just want to see percentage going up... 
 			cout << "[               " << new_percent << " %               ]\r";

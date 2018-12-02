@@ -6,6 +6,8 @@
 #include "GeometryNode.hpp"
 #include "Light.hpp"
 
+extern 
+
 glm::vec3 Render_Pixel(
 		int x, 
 		int y, 

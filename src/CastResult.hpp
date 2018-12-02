@@ -15,6 +15,7 @@ enum class HitType {
 struct CastResult {
   HitType type = HitType::None;
   glm::vec3 intersection;
+  glm::vec3 intersection_old;
   glm::vec3 surface_normal;
   GeometryNode* gnode = nullptr;
   double t = 0;

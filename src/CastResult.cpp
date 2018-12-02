@@ -30,6 +30,8 @@ void CastResult::transform() {
 		this->surface_normal = glm::normalize(n_map + subtract);
     }
 
+    this->intersection_old = intersection;
+
     this->intersection = glm::vec3( trans*glm::vec4(intersection, 1) );
     this->surface_normal = glm::normalize(glm::vec3( glm::vec4(surface_normal, 0)*invtrans ));
 

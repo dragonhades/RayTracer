@@ -286,3 +286,24 @@ CastResult intersectScene(const Ray & ray,
 		return CastResult();
 	}
 }
+
+const SceneNode* findNode(const SceneNode* node,
+						  const std::string & name, 
+						  glm::mat4 & trans)
+{
+	CastResult result;
+	if(node->m_name == name) {
+		trans = node->get_transform();
+		return node;
+	} else {
+		for(SceneNode* child : node->children){
+			mat4 T = trans*node->get_transform();
+			const SceneNode* result = findNode(child, name, T);
+			if(result) {
+				trans = T*node->get_transform(); 
+				return result;
+			}
+		}
+	}
+	return nullptr;
+}
