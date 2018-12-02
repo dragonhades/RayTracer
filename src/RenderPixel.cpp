@@ -111,7 +111,7 @@ glm::vec3 shading(
 
 		if(gnode->m_name == "ground"){
 			// DPRINTVEC(vec2(result.intersection_old.x, result.intersection_old.z));
-			vec2 coord = world_2_photonMapping(result.intersection_old.x, result.intersection_old.z);
+			vec2 coord = world_2_photonMap(result.intersection_old.x, result.intersection_old.z);
 			vec3 c =  photonMap_chart[int(coord[1])][int(coord[0])] + color;
 			// DPRINTVEC(c);
 			return c;

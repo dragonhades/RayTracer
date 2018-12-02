@@ -6,20 +6,22 @@
 #include "GeometryNode.hpp"
 #include "Light.hpp"
 
-extern int photon_w;
-extern int photon_h;
-extern int photon_dw;
-extern int photon_dh;
+extern int obj_w;
+extern int obj_h;
+extern int photon_distw;
+extern int photon_disth;
+extern int photon_mapw;
+extern int photon_maph;
 
 void Photon_Mapping(
 		int x, 
 		int z,
 
 		// Lighting parameters  
-		const SceneNode* target,
+		const glm::mat4 & trans,
 		const std::list<Light *> lights
 );
 
-glm::vec2 world_2_photonMapping(double x, double z);
+glm::vec2 world_2_photonMap(double x, double z);
 
-glm::vec2 photonMapping_2_world(int x, int z);
+glm::vec2 raydist_2_world(int x, int z);

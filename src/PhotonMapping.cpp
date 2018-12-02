@@ -25,36 +25,31 @@ using namespace std;
 extern SceneNode * root;
 extern std::vector<std::vector<glm::vec3>> photonMap_chart;
 
-vec2 world_2_photonMapping(double x, double z){
-	return vec2(int(x/photon_w*photon_dw), int(z/photon_h*photon_dh));
+glm::vec2 world_2_photonMap(double x, double z){
+	return vec2(int(x/obj_w*photon_mapw), int(z/obj_h*photon_maph));
 }
 
-vec2 photonMapping_2_world(int x, int z){
-	return vec2(x*photon_w/photon_dw, z*photon_h/photon_dh);
+// vec2 photonMap_2_world(int x, int z){
+// 	return vec2(x*photon_mapw400/photon_distw10000, z*photon_h/photon_dh);
+// }
+
+glm::vec2 raydist_2_world(int x, int z){
+	return vec2(x* obj_w / photon_distw, z* obj_h / photon_disth);
 }
 
 void Photon_Mapping(
-		int x, 
-		int z, 
+		int raydist_x, 
+		int raydist_z, 
 
 		// Lighting parameters  
-		const SceneNode* target,
+		const glm::mat4 & trans,
 		const std::list<Light *> lights
 ) {
 
-	int w = photon_w;
-	int h = photon_h;
-	int dw = photon_dw;
-	int dh = photon_dh;
+	vec2 world_xz = raydist_2_world(raydist_x, raydist_z);
+	vec3 p(world_xz[0], 0, world_xz[1]);
 
-	vec2 world = photonMapping_2_world(x, z);
-	vec3 p(world[0], 0, world[1]);
-
-	mat4 trans = mat4();
-	findNode(root, target->m_name, trans);
-	// DPRINTVEC(trans);
 	p = vec3(trans*vec4(p, 1));
-	// p += vec3(-500, -100, -500);
 
 	// DPRINTVEC(p);
 
@@ -67,7 +62,7 @@ void Photon_Mapping(
 
 		if(result.isHit()){
 
-			vec2 pt = world_2_photonMapping(result.intersection_old.x, result.intersection_old.z);
+			vec2 map = world_2_photonMap(result.intersection_old.x, result.intersection_old.z);
 
 			SceneNode* snode = (SceneNode*) result.gnode;
 			DASSERT(snode!=nullptr, "null");
@@ -78,8 +73,8 @@ void Photon_Mapping(
 
 				const vec3 & refract_dir = glm::normalize(
 					get_refract(result.surface_normal, normalize(ray.dir), startRefractiveIndex, endRefractiveIndex));
-				
-				// Total internal reflection
+
+
 				if(refract_dir == vec3(0)) DASSERT(false,"should not happen");
 
 				ray = Ray(result.intersection, refract_dir, true);
@@ -89,7 +84,7 @@ void Photon_Mapping(
 				if(result2.isHit()){
 					result = result2;
 
-					pt = world_2_photonMapping(result.intersection_old.x, result.intersection_old.z);
+					map = world_2_photonMap(result.intersection_old.x, result.intersection_old.z);
 
 					snode = (SceneNode*) result.gnode;
 					DASSERT(snode!=nullptr, "null");
@@ -125,7 +120,7 @@ void Photon_Mapping(
 				vec3 color = kd*I*std::max(float(0), glm::dot(light_dir, n))
 							+ ks*I*std::max(double(0), std::pow(glm::dot(r, v), p) );
 
-				photonMap_chart[pt.y][pt.x] += color; 
+				photonMap_chart[map.y][map.x] += color;
 			}
 		} else {
 			return;
