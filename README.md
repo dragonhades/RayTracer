@@ -19,7 +19,7 @@ $ make
 $ cd src
 $ premake4 gmake
 $ make
-$ ./RayTracer Assets/simple.lua  ## Output: simple.png
+$ ./RayTracer Assets/scene.lua  ## Output: scene.png
 ```
 
 Supported Features
