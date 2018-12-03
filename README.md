@@ -2,6 +2,18 @@ RayTracer Project
 ====================================================
 Robust CPU-based ray tracer. **STAR me** if you find it helpful... ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾  
 
+![](demo/scene.png)
+
+_"Water Cool"_
+
+![](demo/card.png)
+
+_"RTX 2080"_
+
+![](demo/card_disassamble.png)
+
+_"RTX 2080 Disassambled"_
+
 ![](images/texture4K.png)
 
 _Water_Surface_
