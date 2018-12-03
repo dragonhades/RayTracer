@@ -66,7 +66,6 @@ card:translate(-100, -100, 400)
 inbody = gr.cube('inbody')
 inbody:set_material(dgray)
 inbody:scale(500, 220, 70)
-inbody:translate(0, 100, 0)
 
 card:add_child(inbody)
 
