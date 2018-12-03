@@ -1,4 +1,4 @@
-#define NUM_THREADS 1
+#define NUM_THREADS 32
 #define PRINT_PROGRESS
 
 #define SSAA

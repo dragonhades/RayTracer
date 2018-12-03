@@ -65,7 +65,7 @@ card:translate(-100, -100, 400)
 
 inbody = gr.cube('inbody')
 inbody:set_material(dgray)
-inbody:scale(500, 220, 70)
+inbody:scale(500, 225, 70)
 
 card:add_child(inbody)
 
@@ -91,7 +91,7 @@ shell:add_child(subtract_body)
 
 subtract_body2 = gr.cube('subtract_body2')
 subtract_body2:set_material(red)
-subtract_body2:scale(250, 240, 15)
+subtract_body2:scale(250, 250, 15)
 subtract_body2:translate(125, -10, 69.5)
 
 -- card:add_child(subtract_body2)
@@ -195,7 +195,7 @@ gr.render(scene, 'card.png',
 		-- 256, 256,
 	-- 480, 270,
 	-- 640, 360,
-	1280, 720,
-	-- 3840, 2160,
+	-- 1280, 720,
+	 3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light})
