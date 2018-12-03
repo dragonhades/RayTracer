@@ -184,6 +184,15 @@ card:add_child(right_fan)
 right_fan:add_child(fan)
 right_fan:translate(265, 0, 0)
 
+
+
+
+
+
+
+
+
+
 white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_lightlb = gr.light({-100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_light = gr.light({0.0, 500.0, 400}, {0.9, 0.9, 0.9}, {1, 0.0, 0})

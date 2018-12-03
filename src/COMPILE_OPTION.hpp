@@ -4,7 +4,7 @@
 #define SSAA
 #define REFLECTION
 #define REFRACTION
-#define PHOTON_MAPPING
+// #define PHOTON_MAPPING
 #define MAX_SHADE_RECURSION 6
 
 // #define DRAW_BBOX

@@ -5,20 +5,22 @@
 -- and lights have been modified accordingly.
 
 green = gr.material({0.7, 1.0, 0.7}, {0.5, 0.7, 0.5}, 25, 1)
-gray = gr.material({0.5, 0.5, 0.5}, {0.4, 0.4, 0.4}, 8, 1)
-dgray = gr.material({0.2, 0.2, 0.2}, {0.3, 0.3, 0.3}, 10, 1)
+gray = gr.material({0.5, 0.5, 0.5}, {0.1, 0.1, 0.1}, 8, 1)
+dgray = gr.material({0.2, 0.2, 0.2}, {0.1, 0.1, 0.1}, 5, 1)
 yellow = gr.material({1.0, 0.6, 0.1}, {0.5, 0.7, 0.5}, 25, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
 blue = gr.material({0.1, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
 red = gr.material({1.0, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
-glass = gr.material({0.0, 0.0, 0.2}, {0.8, 0.8, 0.8}, 50, 0.0)
+nvidia_green = gr.material({118/255, 185/255, 0.0}, {0.4, 0.4, 0.4}, 8, 1)
+glass = gr.material({0.0, 0.0, 0.0}, {0.8, 0.8, 0.8}, 50, 0.0)
+silver = gr.material({0.9, 0.9, 0.9}, {0.2, 0.2, 0.2}, 12, 1)
 
 stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0, 1)
 grass = gr.material({0.1, 0.7, 0.1}, {0.0, 0.0, 0.0}, 0, 1)
 
 
 scene = gr.node( 'scene' )
-scene:translate(0, -300, 0)
+scene:translate(0, -330, 0)
 scene:rotate('x', 20)
 
 -- s1 = gr.nh_sphere('s1', {0, 0, -400}, 100)
@@ -66,11 +68,11 @@ ground:translate(-500, -200, -500) ---500, -100, -500
 
 testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
-testb:set_material(gray)
--- testb:set_texture("Jensen_cut.png")
+testb:set_material(dgray)
+-- testb:set_texture("geforce_rtx.png")
 testb:scale(500, 40, 300)
 testb:rotate('x', 90);
-testb:translate(0, -200, -1000)
+testb:translate(0, 100, -500)
 
 testbl = gr.cube('testbl')
 scene:add_child(testbl)
@@ -117,7 +119,7 @@ testbr:translate(500, -200, -500)
 
 white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_lightlb = gr.light({-100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
-white_light = gr.light({0.0, 500.0, 400}, {0.9, 0.9, 0.9}, {1, 0.0003, 0})
+white_light = gr.light({0.0, 500.0, 400}, {0.9, 0.9, 0.9}, {1, 0.00001, 0})
 white_lightrt = gr.light({100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_lightrb = gr.light({100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 orange_light = gr.light({100.0, 200.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
