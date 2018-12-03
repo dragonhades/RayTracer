@@ -32,7 +32,7 @@ ground:translate(-500, -200, -500) ---500, -100, -500
 testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
 testb:set_material(gray)
-testb:set_texture("logo_left.png")
+testb:set_texture("geforce_rtx_left.png")
 testb:scale(1000, 40, 600)
 testb:rotate('x', 90);
 testb:translate(0, 100, -500)
@@ -110,7 +110,6 @@ sidebar1:set_material(silver)
 card:add_child(sidebar1)
 sidebar1:scale(120, 5, 10)
 sidebar1:translate(180, -20, 25)
-sidebar1:translate(0, 100, 0)
 
 sidebar2 = gr.cube('sidebar2')
 sidebar2:set_material(silver)
@@ -141,14 +140,12 @@ sidebar_c2:add_child(subtract_sidebar22)
 left_sidebar = gr.node('left_sidebar')
 card:add_child(left_sidebar)
 left_sidebar:add_child(sidebar_c2)
-left_sidebar:translate(0, -150, 0)
 
 right_sidebar = gr.node('right_sidebar')
 card:add_child(right_sidebar)
 right_sidebar:add_child(sidebar_c2)
 right_sidebar:rotate('z', 180)
 right_sidebar:translate(470, -35, 0)
-right_sidebar:translate(0, -150, 0)
 
 
 fan = gr.node('fan')

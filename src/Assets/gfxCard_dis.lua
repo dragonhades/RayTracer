@@ -39,7 +39,7 @@ ground:translate(-500, -200, -500) ---500, -100, -500
 testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
 testb:set_material(gray)
-testb:set_texture("logo_left.png")
+testb:set_texture("geforce_rtx_left.png")
 testb:scale(1000, 40, 600)
 testb:rotate('x', 90);
 testb:translate(0, 100, -500)
