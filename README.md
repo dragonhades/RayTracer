@@ -2,34 +2,13 @@ RayTracer Project
 ====================================================
 Robust CPU-based ray tracer. **STAR me** if you find it helpful... ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾  
 
+Final Scene
+----------------
 ![](demo/scene.png)
 
-_"Water Cool"_
+_Water Cool_
 
 ![](demo/card.png)
-
-_"RTX 2080"_
-
-![](demo/card_disassamble.png)
-
-_"RTX 2080 Disassambled"_
-
-![](images/texture4K.png)
-
-_Water_Surface_
-
-![](images/nonhier4K.png)
-
-_Reflection & Refraction (Glass)_
-
-![](images/csg.png)
-
-_CSG demo_
-
-![](images/addprim.png)
-
-_Primitive : Cylinder_
-
 
 Manual
 ----------------
@@ -42,13 +21,6 @@ $ premake4 gmake
 $ make
 $ ./RayTracer Assets/simple.lua  ## Output: simple.png
 ```
-
-Final Scene
-----------------
-![](demo/scene.png)
-
-![](demo/card.png)
-
 
 Supported Features
 -------------------------
