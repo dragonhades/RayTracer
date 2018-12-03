@@ -23,42 +23,17 @@ scene = gr.node( 'scene' )
 scene:translate(0, -330, 0)
 scene:rotate('x', 20)
 
--- s1 = gr.nh_sphere('s1', {0, 0, -400}, 100)
--- scene:add_child(s1)
--- s1:set_material(green)
+s1 = gr.nh_sphere('s1', {0, 0, -400}, 100)
+scene:add_child(s1)
+s1:set_material(green)
 
--- s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
--- scene:add_child(s2)
--- s2:set_material(green)
+s2 = gr.nh_sphere('s2', {200, 50, 200}, 100)
+scene:add_child(s2)
+s2:set_material(glass)
 
--- s3 = gr.nh_sphere('s3', {0, -1800, -500}, 1000)
--- scene:add_child(s3)
--- s3:set_material(gray)
-
--- b1 = gr.nh_box('b1', {50, -125, 150}, 100)
--- scene:add_child(b1)
--- b1:set_material(mat4)
-
--- c1 = gr.nh_cylinder('c1', {0, 0, 0}, 8, 300)
--- scene:add_child(c1)
--- c1:set_material(mat4)
--- c1:rotate('z', -20);
--- c1:translate(0, 0, 150)
-
--- s4 = gr.nh_sphere('s4', {-100, 25, -300}, 50)
--- scene:add_child(s4)
--- s4:set_material(yellow)
-
--- s5 = gr.nh_sphere('s5', {0, 100, -250}, 25)
--- scene:add_child(s5)
--- s5:set_material(green)
-
--- water = gr.mesh('water', 'plane.obj' )
--- scene:add_child(water)
--- water:set_material(glass)
--- water:set_normalmap("water_normal.png")
--- water:scale(500, 40, 500)
--- water:translate(0, 50, 0)
+s3 = gr.nh_sphere('s3', {-200, 50, 200}, 100)
+scene:add_child(s3)
+s3:set_material(glass)
 
 ground = gr.nh_box('ground', {0,0,0}, 1000)
 scene:add_child(ground)
@@ -86,19 +61,6 @@ testbr:set_material(blue)
 testbr:scale(1, 600, 1000)
 testbr:translate(500, -200, -500)
 
-c1 = gr.nh_cylinder('c1', {0, 0, 0}, 50, 150)
-scene:add_child(c1)
-c1:set_material(mat4)
-c1:rotate('z', -20);
-c1:translate(-100, 0, 150)
-
-c2 = gr.nh_cylinder('c2', {0, 0, 0}, 50, 150)
-scene:add_child(c2)
-c2:set_material(mat4)
-c2:rotate('x', -90)
-c2:rotate('y', 10)
-c2:rotate('z', -20);
-c2:translate(100, 0, 150)
 
 -- arc = gr.node('arc')
 -- scene:add_child(arc)
@@ -138,7 +100,7 @@ white_lightrt = gr.light({100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_lightrb = gr.light({100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 orange_light = gr.light({100.0, 200.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 
-gr.render(scene, 'photon.png', 
+gr.render(scene, 'lighting.png', 
 	-- 256, 256,
 	-- 512, 512,
 	-- 1024, 1024,
