@@ -116,10 +116,10 @@ void Render(
 
 	obj_w = 1000;
 	obj_h = 1000;
-	photon_distw = 10000;
-	photon_disth = 10000;
-	photon_mapw = 500;
-	photon_maph = 500;
+	photon_distw = 600;
+	photon_disth = 600;
+	photon_mapw = 400;
+	photon_maph = 400;
 
 	/*
 		Note: possible hit point range from 0 to photon_dw/photon_dh, 
