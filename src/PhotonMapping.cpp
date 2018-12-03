@@ -99,7 +99,7 @@ void Photon_Mapping(
 				GeometryNode * gnode = (GeometryNode*) snode;
 
 				PhongMaterial* phong = (PhongMaterial*) gnode->m_material;
-				const vec3 & kd = phong->m_kd;
+				const vec3 & kd = phong->get_kd();
 				const vec3 & ks = phong->m_ks;
 				const double & p = phong->m_shininess;
 				const double & opacity = phong->m_opacity;

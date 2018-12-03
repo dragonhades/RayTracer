@@ -93,10 +93,10 @@ glm::vec3 shading(
 		/** Phong illumination **/
 		PhongMaterial* phong = (PhongMaterial*) gnode->m_material;
 		vec3 kd;
-		// if(phong->has_normalmap())
-		// 	kd = phong->normal(result.intersection_prime.x, result.intersection_prime.z);
-		// else 
-			kd = phong->m_kd;
+		if(phong->m_type == MaterialType::Texture)
+			kd = phong->get_kd(result.intersection_old.x, result.intersection_old.z);
+		else 
+			kd = phong->get_kd();
 		const vec3 & ks = phong->m_ks;
 		const double & p = phong->m_shininess;
 		const double & opacity = phong->m_opacity;
@@ -109,6 +109,7 @@ glm::vec3 shading(
 		// ambient = Kd * Ia
 		vec3 color = ambient*kd;
 
+#ifdef PHOTON_MAPPING
 		if(gnode->m_name == "ground"){
 			// DPRINTVEC(vec2(result.intersection_old.x, result.intersection_old.z));
 			vec2 coord = world_2_photonMap(result.intersection_old.x, result.intersection_old.z);
@@ -116,7 +117,7 @@ glm::vec3 shading(
 			// DPRINTVEC(c);
 			return c;
 		}
-
+#endif
 
 //--------------------------  Lighting  -----------------------------//
 
