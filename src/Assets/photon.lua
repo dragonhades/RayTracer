@@ -5,12 +5,12 @@
 -- and lights have been modified accordingly.
 
 green = gr.material({0.7, 1.0, 0.7}, {0.5, 0.7, 0.5}, 25, 1)
-gray = gr.material({0.5, 0.5, 0.5}, {0.1, 0.1, 0.1}, 15, 1)
+gray = gr.material({0.5, 0.5, 0.5}, {0.3, 0.3, 0.3}, 8, 1)
 dgray = gr.material({0.2, 0.2, 0.2}, {0.3, 0.3, 0.3}, 10, 1)
 yellow = gr.material({1.0, 0.6, 0.1}, {0.5, 0.7, 0.5}, 25, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
-blue = gr.material({0.1, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
-red = gr.material({1.0, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
+blue = gr.material({0.1, 0.1, 0.3}, {0.3, 0.3, 0.3}, 8, 1)
+red = gr.material({1.0, 0.1, 0.3}, {0.3, 0.3, 0.3}, 8, 1)
 glass = gr.material({0.0, 0.0, 0.2}, {0.8, 0.8, 0.8}, 50, 0.0)
 
 stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0, 1)
@@ -21,9 +21,9 @@ scene = gr.node( 'scene' )
 scene:translate(0, -300, 0)
 scene:rotate('x', 20)
 
-s1 = gr.nh_sphere('s1', {0, 0, -400}, 100)
-scene:add_child(s1)
-s1:set_material(green)
+-- s1 = gr.nh_sphere('s1', {0, 0, -400}, 100)
+-- scene:add_child(s1)
+-- s1:set_material(green)
 
 s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
 scene:add_child(s2)
@@ -33,9 +33,9 @@ s2:set_material(green)
 -- scene:add_child(s3)
 -- s3:set_material(gray)
 
-b1 = gr.nh_box('b1', {50, -125, 150}, 100)
-scene:add_child(b1)
-b1:set_material(mat4)
+-- b1 = gr.nh_box('b1', {50, -125, 150}, 100)
+-- scene:add_child(b1)
+-- b1:set_material(mat4)
 
 -- c1 = gr.nh_cylinder('c1', {0, 0, 0}, 8, 300)
 -- scene:add_child(c1)
@@ -62,15 +62,15 @@ ground = gr.nh_box('ground', {0,0,0}, 1000)
 scene:add_child(ground)
 ground:set_material(dgray)
 ground:scale(1, 1/1000.0, 1)
-ground:translate(-500, -200, -500) ---500, -100, -500
+ground:translate(-500, -200, -500)
 
 testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
 testb:set_material(gray)
-testb:set_texture("Jensen_cut.png")
-testb:scale(1000, 40, 600)
+-- testb:set_texture("Jensen_cut.png")
+testb:scale(500, 40, 300)
 testb:rotate('x', 90);
-testb:translate(0, -200, -1000)
+testb:translate(0, 100, -500)
 
 testbl = gr.cube('testbl')
 scene:add_child(testbl)
@@ -115,11 +115,11 @@ testbr:translate(500, -200, -500)
 -- scene:add_child(steldodec)
 -- steldodec:translate(0, 100, 200)
 
-white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
-white_lightlb = gr.light({-100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
+white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.004, 0})
+white_lightlb = gr.light({-100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.004, 0})
 white_light = gr.light({0.0, 500.0, 400}, {0.9, 0.9, 0.9}, {1, 0.0003, 0})
-white_lightrt = gr.light({100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
-white_lightrb = gr.light({100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
+white_lightrt = gr.light({100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.004, 0})
+white_lightrb = gr.light({100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.004, 0})
 orange_light = gr.light({100.0, 200.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 
 gr.render(scene, 'photon.png', 
@@ -132,7 +132,7 @@ gr.render(scene, 'photon.png',
 		-- 256, 256,
 	-- 480, 270,
 	-- 640, 360,
-	-- 1280, 720,
-	3840, 2160,
+	1280, 720,
+	-- 3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
-	  {0.3, 0.3, 0.3}, {white_light, white_lightl, white_lightr})
+	  {0.3, 0.3, 0.3}, {white_light})

@@ -145,18 +145,18 @@ glm::vec3 shading(
 
 _shadow_ray_loop_:
 			if(shadowRay_result.isHit()){
-				// PhongMaterial* mat = (PhongMaterial*) shadowRay_result.gnode->m_material;
-				// if(mat){
-				// 	if(mat->m_opacity != 0.0) // if object is not transparent;
-				// 		continue;	// discard;
-				// 	else {
-				// 		shadowRay = Ray(shadowRay_result.intersection, light_dir, ray.inside_shape);
-				// 		shadowRay_result = intersectScene(shadowRay);
-				// 		goto _shadow_ray_loop_;
-				// 	}
-				// } else {
+				PhongMaterial* mat = (PhongMaterial*) shadowRay_result.gnode->m_material;
+				if(mat){
+					if(mat->m_opacity != 0.0) // if object is not transparent;
+						continue;	// discard;
+					else {
+						shadowRay = Ray(shadowRay_result.intersection, light_dir, ray.inside_shape);
+						shadowRay_result = intersectScene(shadowRay);
+						goto _shadow_ray_loop_;
+					}
+				} else {
 					continue;
-				// }
+				}
 			} 
 				
 			color_self = kd*I*std::max(float(0), glm::dot(light_dir, n))
