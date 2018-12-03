@@ -69,7 +69,7 @@ ground:translate(-500, -200, -500) ---500, -100, -500
 testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
 testb:set_material(gray)
--- testb:set_texture("Jensen_cut.png")
+testb:set_texture("logo.png")
 testb:scale(500, 40, 300)
 testb:rotate('x', 90);
 testb:translate(0, 100, -500)
