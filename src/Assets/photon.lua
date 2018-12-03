@@ -56,7 +56,7 @@ s5:set_material(green)
 water = gr.mesh('water', 'plane.obj' )
 scene:add_child(water)
 water:set_material(glass)
--- water:set_normalmap("water_normal.png")
+water:set_normalmap("water_normal.png")
 water:scale(500, 40, 500)
 water:translate(0, 50, 0)
 
