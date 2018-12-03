@@ -5,12 +5,13 @@
 -- and lights have been modified accordingly.
 
 green = gr.material({0.7, 1.0, 0.7}, {0.5, 0.7, 0.5}, 25, 1)
-gray = gr.material({0.5, 0.5, 0.5}, {0.4, 0.4, 0.4}, 8, 1)
+gray = gr.material({0.5, 0.5, 0.5}, {0.1, 0.1, 0.1}, 8, 1)
 dgray = gr.material({0.2, 0.2, 0.2}, {0.3, 0.3, 0.3}, 10, 1)
 yellow = gr.material({1.0, 0.6, 0.1}, {0.5, 0.7, 0.5}, 25, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
 blue = gr.material({0.1, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
 red = gr.material({1.0, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
+nvidia_green = gr.material({118/255, 185/255, 0.0}, {0.4, 0.4, 0.4}, 8, 1)
 glass = gr.material({0.0, 0.0, 0.2}, {0.8, 0.8, 0.8}, 50, 0.0)
 
 stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0, 1)
@@ -25,9 +26,9 @@ scene:rotate('x', 20)
 -- scene:add_child(s1)
 -- s1:set_material(green)
 
-s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
-scene:add_child(s2)
-s2:set_material(green)
+-- s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
+-- scene:add_child(s2)
+-- s2:set_material(green)
 
 -- s3 = gr.nh_sphere('s3', {0, -1800, -500}, 1000)
 -- scene:add_child(s3)
@@ -51,12 +52,12 @@ s2:set_material(green)
 -- scene:add_child(s5)
 -- s5:set_material(green)
 
--- water = gr.mesh('water', 'plane.obj' )
--- scene:add_child(water)
--- water:set_material(glass)
--- water:set_normalmap("water_normal.png")
--- water:scale(500, 40, 500)
--- water:translate(0, 50, 0)
+water = gr.mesh('water', 'plane.obj' )
+scene:add_child(water)
+water:set_material(glass)
+water:set_normalmap("water_normal.png")
+water:scale(500, 40, 500)
+water:translate(0, 50, 0)
 
 ground = gr.nh_box('ground', {0,0,0}, 1000)
 scene:add_child(ground)
@@ -64,25 +65,37 @@ ground:set_material(dgray)
 ground:scale(1, 1/1000.0, 1)
 ground:translate(-500, -200, -500) ---500, -100, -500
 
--- testb = gr.mesh('testb', 'plane.obj')
--- scene:add_child(testb)
--- testb:set_material(gray)
--- -- testb:set_texture("Jensen_cut.png")
--- testb:scale(1000, 40, 600)
--- testb:rotate('x', 90);
--- testb:translate(0, -100, -1000)
+testb = gr.mesh('testb', 'plane.obj')
+scene:add_child(testb)
+testb:set_material(gray)
+-- testb:set_texture("Jensen_cut.png")
+testb:scale(500, 40, 300)
+testb:rotate('x', 90);
+testb:translate(0, 100, -500)
 
 testbl = gr.cube('testbl')
 scene:add_child(testbl)
-testbl:set_material(red)
+testbl:set_material(nvidia_green)
 testbl:scale(1, 600, 1000)
 testbl:translate(-500, -200, -500)
 
+
 testbr = gr.cube('testbr')
 scene:add_child(testbr)
-testbr:set_material(blue)
+testbr:set_material(nvidia_green)
 testbr:scale(1, 600, 1000)
 testbr:translate(500, -200, -500)
+
+card = gr.node( 'card' )
+
+body = gr.cube('body')
+scene:add_child(body)
+body:set_material(gray)
+body:scale(500, 200, 70)
+body:rotate('x', -20)
+body:rotate('y', 30)
+body:rotate('z', 30)
+body:translate(-100, -100, 400)
 
 
 
@@ -132,9 +145,9 @@ gr.render(scene, 'scene.png',
 	-- 2160, 2160,
 
 		-- 256, 256,
-	-- 480, 270,
+	480, 270,
 	-- 640, 360,
-	1280, 720,
+	-- 1280, 720,
 	-- 3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light})

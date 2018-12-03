@@ -68,7 +68,7 @@ testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
 testb:set_material(gray)
 testb:set_texture("Jensen_cut.png")
-testb:scale(1000, 40, 600)
+testb:scale(500, 40, 300)
 testb:rotate('x', 90);
 testb:translate(0, -200, -1000)
 
