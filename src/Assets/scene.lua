@@ -98,37 +98,125 @@ body:rotate('z', 30)
 body:translate(-100, -100, 400)
 
 
+-- real
+card:rotate('x', -50)
+-- card:rotate('x', -100)
+card:rotate('y', 30)
+card:rotate('z', 30)
+card:translate(-100, -100, 400)
 
--- arc = gr.node('arc')
--- scene:add_child(arc)
--- arc:scale(30, 30, 30)
--- arc:rotate('y', -20)
--- arc:translate(-100, 0, 100)
+inbody = gr.cube('inbody')
+inbody:set_material(dgray)
+inbody:scale(500, 220, 70)
 
--- p1 = gr.nh_box('p1', {0, 0, 0}, 1)
--- arc:add_child(p1)
--- p1:set_material(stone)
--- p1:scale(0.8, 4, 0.8)
--- p1:translate(-2.4, 0, -0.4)
+card:add_child(inbody)
 
--- p2 = gr.nh_box('p2', {0, 0, 0}, 1)
--- arc:add_child(p2)
--- p2:set_material(stone)
--- p2:scale(0.8, 4, 0.8)
--- p2:translate(1.6, 0, -0.4)
+outbody = gr.cube('outbody')
+outbody:set_material(silver)
+outbody:scale(510, 230, 80)
+outbody:translate(-5, -5, -5)
 
--- s = gr.nh_sphere('s', {0, 0, 0}, 1)
--- arc:add_child(s)
--- s:set_material(stone)
--- s:scale(4, 0.6, 0.6)
--- s:translate(0, 4, 0)
+-- card:add_child(outbody)
 
--- A small stellated dodecahedron.
+subtract_body = gr.cube('subtract_body')
+subtract_body:set_material(red)
+subtract_body:scale(500, 300, 70)
+subtract_body:translate(0, -60, 0)
 
--- steldodec = gr.mesh( 'dodec', 'smstdodeca.obj' )
--- steldodec:set_material(yellow)
--- scene:add_child(steldodec)
--- steldodec:translate(0, 100, 200)
+-- card:add_child(subtract_body)
+
+
+shell = gr.construct('shell', 'difference')
+
+shell:add_child(outbody)
+shell:add_child(subtract_body)
+
+subtract_body2 = gr.cube('subtract_body2')
+subtract_body2:set_material(red)
+subtract_body2:scale(250, 240, 15)
+subtract_body2:translate(125, -10, 69.5)
+
+-- card:add_child(subtract_body2)
+
+
+shell2 = gr.construct('shell2', 'difference')
+shell2:add_child(shell)
+shell2:add_child(subtract_body2)
+
+card:add_child(shell2)
+
+
+sidebar1 = gr.cube('sidebar1')
+sidebar1:set_material(silver)
+card:add_child(sidebar1)
+sidebar1:scale(120, 5, 10)
+sidebar1:translate(180, -20, 25)
+
+sidebar2 = gr.cube('sidebar2')
+sidebar2:set_material(silver)
+sidebar2:scale(120, 5, 30)
+sidebar2:rotate('y', -135)
+sidebar2:translate(190, -20, 25)
+
+sidebar_c1 = gr.construct('sidebar_c1', 'difference')
+
+subtract_sidebar21 = gr.cube('subtract_sidebar21')
+subtract_sidebar21:set_material(red)
+subtract_sidebar21:scale(120, 15, 50)
+subtract_sidebar21:translate(80, -25, 70)
+
+sidebar_c1:add_child(sidebar2)
+sidebar_c1:add_child(subtract_sidebar21)
+
+subtract_sidebar22 = gr.cube('subtract_sidebar22')
+subtract_sidebar22:set_material(red)
+subtract_sidebar22:scale(120, 15, 50)
+subtract_sidebar22:translate(80, -25, -25)
+
+sidebar_c2 = gr.construct('sidebar_c2', 'difference')
+
+sidebar_c2:add_child(sidebar_c1)
+sidebar_c2:add_child(subtract_sidebar22)
+
+left_sidebar = gr.node('left_sidebar')
+card:add_child(left_sidebar)
+left_sidebar:add_child(sidebar_c2)
+
+right_sidebar = gr.node('right_sidebar')
+card:add_child(right_sidebar)
+right_sidebar:add_child(sidebar_c2)
+right_sidebar:rotate('z', 180)
+right_sidebar:translate(470, -35, 0)
+
+fan = gr.node('fan')
+
+fan_out = gr.nh_cylinder('fan_out', {0, 0, 0}, 100, 10)
+fan:add_child(fan_out)
+fan_out:set_material(silver)
+fan_out:rotate('x', 90)
+fan_out:translate(120, 110, 75)
+
+fan_in = gr.nh_cylinder('fan_in', {0, 0, 0}, 95, 10)
+fan:add_child(fan_in)
+fan_in:set_material(dgray)
+fan_in:rotate('x', 90)
+fan_in:translate(120, 110, 77)
+
+fan_center = gr.nh_cylinder('fan_center', {0, 0, 0}, 35, 10)
+fan:add_child(fan_center)
+fan_center:set_material(silver)
+fan_center:rotate('x', 90)
+fan_center:translate(120, 110, 79)
+
+
+left_fan = gr.node('left_fan')
+card:add_child(left_fan)
+left_fan:add_child(fan)
+
+right_fan = gr.node('right_fan')
+card:add_child(right_fan)
+right_fan:add_child(fan)
+right_fan:translate(265, 0, 0)
 
 white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_lightlb = gr.light({-100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
