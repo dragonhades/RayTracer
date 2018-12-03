@@ -5,7 +5,7 @@
 -- and lights have been modified accordingly.
 
 green = gr.material({0.7, 1.0, 0.7}, {0.5, 0.7, 0.5}, 25, 1)
-gray = gr.material({0.5, 0.5, 0.5}, {0.1, 0.1, 0.1}, 15, 1)
+gray = gr.material({0.5, 0.5, 0.5}, {0.4, 0.4, 0.4}, 8, 1)
 dgray = gr.material({0.2, 0.2, 0.2}, {0.3, 0.3, 0.3}, 10, 1)
 yellow = gr.material({1.0, 0.6, 0.1}, {0.5, 0.7, 0.5}, 25, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
@@ -25,9 +25,9 @@ scene:rotate('x', 20)
 -- scene:add_child(s1)
 -- s1:set_material(green)
 
--- s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
--- scene:add_child(s2)
--- s2:set_material(green)
+s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
+scene:add_child(s2)
+s2:set_material(green)
 
 -- s3 = gr.nh_sphere('s3', {0, -1800, -500}, 1000)
 -- scene:add_child(s3)
@@ -67,7 +67,7 @@ ground:translate(-500, -200, -500) ---500, -100, -500
 testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
 testb:set_material(gray)
-testb:set_texture("Jensen_cut.png")
+-- testb:set_texture("Jensen_cut.png")
 testb:scale(1000, 40, 600)
 testb:rotate('x', 90);
 testb:translate(0, -200, -1000)
@@ -83,6 +83,8 @@ scene:add_child(testbr)
 testbr:set_material(blue)
 testbr:scale(1, 600, 1000)
 testbr:translate(500, -200, -500)
+
+
 
 -- arc = gr.node('arc')
 -- scene:add_child(arc)
@@ -122,7 +124,7 @@ white_lightrt = gr.light({100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_lightrb = gr.light({100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 orange_light = gr.light({100.0, 200.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 
-gr.render(scene, 'texture.png', 
+gr.render(scene, 'scene.png', 
 	-- 256, 256,
 	-- 512, 512,
 	-- 1024, 1024,
