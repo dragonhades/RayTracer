@@ -161,6 +161,25 @@ fan_in:set_material(dgray)
 fan_in:rotate('x', 90)
 fan_in:translate(120, 110, 77)
 
+blade = gr.cube('blade')
+blade:set_material(dgray)
+blade:scale(50, 30, 5)
+blade:rotate('x', 30)
+blade:rotate('y', -10)
+blade:translate(40, -10, 0)
+
+blade:translate(120, 110, 99)
+
+fan:add_child(blade)
+
+-- for i = 1, 6 do
+--    fan_blade = gr.node('fan_blade' .. tostring(i))
+--    fan_blade:rotate('Y', (i-1) * 60)
+--    fan:add_child(fan_blade)
+--    fan_blade:add_child(arc)
+-- end
+
+
 fan_center = gr.nh_cylinder('fan_center', {0, 0, 0}, 35, 10)
 fan:add_child(fan_center)
 fan_center:set_material(silver)
@@ -193,9 +212,9 @@ gr.render(scene, 'card.png',
 	-- 2160, 2160,
 
 		-- 256, 256,
-	-- 480, 270,
+	480, 270,
 	-- 640, 360,
 	-- 1280, 720,
-	 3840, 2160,
+	 -- 3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light})

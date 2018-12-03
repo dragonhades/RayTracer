@@ -60,8 +60,6 @@ testbr:translate(500, -200, -500)
 
 
 
-
-
 card = gr.node( 'card' )
 scene:add_child(card)
 
@@ -74,7 +72,7 @@ card:translate(-100, -70, 400)
 
 inbody = gr.cube('inbody')
 inbody:set_material(dgray)
-inbody:scale(500, 220, 70)
+inbody:scale(500, 225, 70)
 
 card:add_child(inbody)
 
