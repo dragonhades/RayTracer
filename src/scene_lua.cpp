@@ -56,7 +56,6 @@
 #include "Primitive.hpp"
 #include "Material.hpp"
 #include "PhongMaterial.hpp"
-#include "Texture.hpp"
 #include "RayTracer.hpp"
 
 typedef std::map<std::string,Mesh*> MeshMap;
@@ -462,20 +461,40 @@ int gr_node_set_material_cmd(lua_State* L)
 
     luaL_argcheck(L, self != 0, 1, "Geometry node expected");
 
-
-    // const char* name = luaL_checkstring(L, 2);
-
-    // if(name){
-    //     self->m_material = new Texture(name);
-    //     return 0;
-    // }
-
     gr_material_ud* matdata = (gr_material_ud*)luaL_checkudata(L, 2, "gr.material");
     // luaL_argcheck(L, matdata != 0, 2, "Material expected");
 
     Material* material = matdata->material;
 
     self->setMaterial(material);
+
+    return 0;
+}
+
+
+// Set a node's Texture
+extern "C"
+int gr_node_set_texture_cmd(lua_State* L)
+{
+    GRLUA_DEBUG_CALL;
+
+    gr_node_ud* selfdata = (gr_node_ud*)luaL_checkudata(L, 1, "gr.node");
+    luaL_argcheck(L, selfdata != 0, 1, "Node expected");
+
+    GeometryNode* self = dynamic_cast<GeometryNode*>(selfdata->node);
+
+    luaL_argcheck(L, self != 0, 1, "Geometry node expected");
+
+    PhongMaterial* mat = (PhongMaterial*)self->m_material;
+  
+    const char* name = luaL_checkstring(L, 2);
+
+    if(mat==nullptr){
+      std::cerr<<"material does not exist"<<std::endl;
+      return 1;
+    }
+    
+    mat->addTexture(name);
 
     return 0;
 }
@@ -636,6 +655,7 @@ static const luaL_Reg grlib_node_methods[] = {
   {"add_child", gr_node_add_child_cmd},
   {"set_material", gr_node_set_material_cmd},
   {"set_normalmap", gr_node_set_nmap_cmd},
+  {"set_texture", gr_node_set_texture_cmd},
   {"scale", gr_node_scale_cmd},
   {"rotate", gr_node_rotate_cmd},
   {"translate", gr_node_translate_cmd},

@@ -5,12 +5,12 @@
 -- and lights have been modified accordingly.
 
 green = gr.material({0.7, 1.0, 0.7}, {0.5, 0.7, 0.5}, 25, 1)
-gray = gr.material({0.5, 0.5, 0.5}, {0.1, 0.2, 0.1}, 10, 1)
-dgray = gr.material({0.2, 0.2, 0.2}, {0.3, 0.3, 0.3}, 8, 1)
+gray = gr.material({0.5, 0.5, 0.5}, {0.1, 0.1, 0.1}, 15, 1)
+dgray = gr.material({0.2, 0.2, 0.2}, {0.3, 0.3, 0.3}, 10, 1)
 yellow = gr.material({1.0, 0.6, 0.1}, {0.5, 0.7, 0.5}, 25, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
-blue = gr.material({0.1, 0.1, 0.3}, {0.1, 0.2, 0.1}, 3, 1)
-red = gr.material({1.0, 0.1, 0.3}, {0.1, 0.2, 0.1}, 3, 1)
+blue = gr.material({0.1, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
+red = gr.material({1.0, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
 glass = gr.material({0.0, 0.0, 0.2}, {0.8, 0.8, 0.8}, 50, 0.0)
 
 stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0, 1)
@@ -115,20 +115,24 @@ testbr:translate(500, -200, -500)
 -- scene:add_child(steldodec)
 -- steldodec:translate(0, 100, 200)
 
+white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
+white_lightlb = gr.light({-100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
+white_light = gr.light({0.0, 500.0, 400}, {0.9, 0.9, 0.9}, {1, 0.0003, 0})
+white_lightrt = gr.light({100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
+white_lightrb = gr.light({100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
+orange_light = gr.light({100.0, 200.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 
-white_light = gr.light({-100.0, 150.0, 400.0}, {0.9, 0.9, 0.9}, {1, 0, 0})
-orange_light = gr.light({100.0, 100.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
-
-gr.render(scene, 'texture.png', 
+gr.render(scene, 'photon.png', 
 	-- 256, 256,
 	-- 512, 512,
 	-- 1024, 1024,
 	-- 1280, 1280,
 	-- 2160, 2160,
 
-	480, 270,
+		-- 256, 256,
+	-- 480, 270,
 	-- 640, 360,
 	-- 1280, 720,
-	-- 3840, 2160,
+	3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
-	  {0.3, 0.3, 0.3}, {white_light, orange_light})
+	  {0.3, 0.3, 0.3}, {white_light, white_lightl, white_lightr})

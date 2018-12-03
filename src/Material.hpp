@@ -20,10 +20,10 @@ public:
   bool has_normalmap() { return m_has_normal; }
   glm::vec3 normal(double u, double v);
 
+  MaterialType m_type = MaterialType::None;
+
 protected:
   Material();
-
-  MaterialType m_type = MaterialType::None;
 
   bool m_has_normal = false;
   std::vector<unsigned char> m_nmap;
