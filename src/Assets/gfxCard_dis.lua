@@ -73,7 +73,7 @@ card:translate(-100, -100, 400)
 inbody = gr.cube('inbody')
 inbody:set_material(dgray)
 inbody:scale(500, 220, 70)
-inbody:translate(0, 100, 0)
+inbody:translate(0, 200, 0)
 
 card:add_child(inbody)
 
@@ -117,6 +117,7 @@ sidebar1:set_material(silver)
 card:add_child(sidebar1)
 sidebar1:scale(120, 5, 10)
 sidebar1:translate(180, -20, 25)
+sidebar1:translate(0, -100, 0)
 
 sidebar2 = gr.cube('sidebar2')
 sidebar2:set_material(silver)
@@ -146,6 +147,7 @@ sidebar_c2:add_child(subtract_sidebar22)
 
 left_sidebar = gr.node('left_sidebar')
 card:add_child(left_sidebar)
+left_sidebar:translate(0, -100, 0)
 left_sidebar:add_child(sidebar_c2)
 
 right_sidebar = gr.node('right_sidebar')
@@ -153,6 +155,7 @@ card:add_child(right_sidebar)
 right_sidebar:add_child(sidebar_c2)
 right_sidebar:rotate('z', 180)
 right_sidebar:translate(470, -35, 0)
+right_sidebar:translate(0, -100, 0)
 
 fan = gr.node('fan')
 
@@ -161,18 +164,21 @@ fan:add_child(fan_out)
 fan_out:set_material(silver)
 fan_out:rotate('x', 90)
 fan_out:translate(120, 110, 75)
+fan_out:translate(0, 0, 50)
 
 fan_in = gr.nh_cylinder('fan_in', {0, 0, 0}, 95, 10)
 fan:add_child(fan_in)
 fan_in:set_material(dgray)
 fan_in:rotate('x', 90)
 fan_in:translate(120, 110, 77)
+fan_in:translate(0, 0, 100)
 
 fan_center = gr.nh_cylinder('fan_center', {0, 0, 0}, 35, 10)
 fan:add_child(fan_center)
 fan_center:set_material(silver)
 fan_center:rotate('x', 90)
 fan_center:translate(120, 110, 79)
+fan_center:translate(0, 0, 150)
 
 
 left_fan = gr.node('left_fan')
@@ -200,9 +206,9 @@ gr.render(scene, 'card.png',
 	-- 2160, 2160,
 
 		-- 256, 256,
-	480, 270,
+	-- 480, 270,
 	-- 640, 360,
-	-- 1280, 720,
+	 1280, 720,
 	-- 3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light})
