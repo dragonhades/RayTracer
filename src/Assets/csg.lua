@@ -30,8 +30,10 @@ union1:rotate('y', -10)
 union1:rotate('z', -20)
 union1:translate(-90, -60, 0)
 
-b12 = gr.nh_box('b12', {-230, -120, -290}, 40)
+b12 = gr.nh_box('b12', {0, 0, 0}, 40)
 b12:set_material(mat3)
+b12:scale(3, 1, 5)
+b12:translate(-230, -120, -440)
 
 union1:add_child(b12)
 union1:add_child(diff2)
@@ -76,8 +78,8 @@ orange_light = gr.light({400.0, 100.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 gr.render(scene_root, 'csg.png', 
 	-- 256, 256,
 	-- 480, 270,
-	640, 360,
-	-- 1280, 720,
+	-- 640, 360,
+	1280, 720,
 	-- 3840, 2160,
 
 	  {0, 100, 550},

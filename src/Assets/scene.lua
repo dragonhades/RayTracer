@@ -12,7 +12,7 @@ mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
 blue = gr.material({0.1, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
 red = gr.material({1.0, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
 nvidia_green = gr.material({118/255, 185/255, 0.0}, {0.4, 0.4, 0.4}, 8, 1)
-glass = gr.material({0.0, 0.0, 0.2}, {0.8, 0.8, 0.8}, 50, 0.0)
+glass = gr.material({0.0, 0.0, 0.0}, {0.8, 0.8, 0.8}, 50, 0.0)
 silver = gr.material({0.9, 0.9, 0.9}, {0.2, 0.2, 0.2}, 12, 1)
 
 stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0, 1)
@@ -20,38 +20,8 @@ grass = gr.material({0.1, 0.7, 0.1}, {0.0, 0.0, 0.0}, 0, 1)
 
 
 scene = gr.node( 'scene' )
-scene:translate(0, -300, 0)
+scene:translate(0, -330, 0)
 scene:rotate('x', 20)
-
--- s1 = gr.nh_sphere('s1', {0, 0, -400}, 100)
--- scene:add_child(s1)
--- s1:set_material(green)
-
--- s2 = gr.nh_sphere('s2', {200, 50, -100}, 150)
--- scene:add_child(s2)
--- s2:set_material(green)
-
--- s3 = gr.nh_sphere('s3', {0, -1800, -500}, 1000)
--- scene:add_child(s3)
--- s3:set_material(gray)
-
--- b1 = gr.nh_box('b1', {50, -125, 150}, 100)
--- scene:add_child(b1)
--- b1:set_material(mat4)
-
--- c1 = gr.nh_cylinder('c1', {0, 0, 0}, 8, 300)
--- scene:add_child(c1)
--- c1:set_material(mat4)
--- c1:rotate('z', -20);
--- c1:translate(0, 0, 150)
-
--- s4 = gr.nh_sphere('s4', {-100, 25, -300}, 50)
--- scene:add_child(s4)
--- s4:set_material(yellow)
-
--- s5 = gr.nh_sphere('s5', {0, 100, -250}, 25)
--- scene:add_child(s5)
--- s5:set_material(green)
 
 water = gr.mesh('water', 'plane.obj' )
 scene:add_child(water)
@@ -68,8 +38,8 @@ ground:translate(-500, -200, -500) ---500, -100, -500
 
 testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
-testb:set_material(gray)
-testb:set_texture("logo.png")
+testb:set_material(dgray)
+testb:set_texture("geforce_rtx.png")
 testb:scale(500, 40, 300)
 testb:rotate('x', 90);
 testb:translate(0, 100, -500)
@@ -87,15 +57,20 @@ testbr:set_material(nvidia_green)
 testbr:scale(1, 600, 1000)
 testbr:translate(500, -200, -500)
 
+
+
+
+
+
 card = gr.node( 'card' )
 scene:add_child(card)
 
 -- real
 card:rotate('x', -50)
 -- card:rotate('x', -100)
-card:rotate('y', 30)
+card:rotate('y', 40)
 card:rotate('z', 30)
-card:translate(-100, -100, 400)
+card:translate(-100, -70, 400)
 
 inbody = gr.cube('inbody')
 inbody:set_material(dgray)
@@ -223,10 +198,9 @@ gr.render(scene, 'scene.png',
 	-- 1280, 1280,
 	-- 2160, 2160,
 
-		-- 256, 256,
-	480, 270,
+	-- 480, 270,
 	-- 640, 360,
 	-- 1280, 720,
-	-- 3840, 2160,
+	3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light})
