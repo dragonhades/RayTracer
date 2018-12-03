@@ -89,16 +89,6 @@ testbr:translate(500, -200, -500)
 
 card = gr.node( 'card' )
 
-body = gr.cube('body')
-scene:add_child(body)
-body:set_material(gray)
-body:scale(500, 200, 70)
-body:rotate('x', -20)
-body:rotate('y', 30)
-body:rotate('z', 30)
-body:translate(-100, -100, 400)
-
-
 -- real
 card:rotate('x', -50)
 -- card:rotate('x', -100)
@@ -125,7 +115,6 @@ subtract_body:scale(500, 300, 70)
 subtract_body:translate(0, -60, 0)
 
 -- card:add_child(subtract_body)
-
 
 shell = gr.construct('shell', 'difference')
 
