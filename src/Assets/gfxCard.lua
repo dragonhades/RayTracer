@@ -32,7 +32,7 @@ scene:rotate('x', 20)
 
 ground = gr.nh_box('ground', {0,0,0}, 1000)
 scene:add_child(ground)
-ground:set_material(dgray)
+ground:set_material(nvidia_green)
 ground:scale(1, 1/1000.0, 1)
 ground:translate(-500, -200, -500) ---500, -100, -500
 
@@ -58,10 +58,14 @@ testb:translate(0, 100, -500)
 
 card = gr.node( 'card' )
 scene:add_child(card)
+-- side
 -- card:rotate('x', 50)
 -- card:rotate('y', 45)
 -- card:rotate('z', 20)
-card:rotate('x', -50)
+
+-- real
+-- card:rotate('x', -50)
+card:rotate('x', -100)
 card:rotate('y', 30)
 card:rotate('z', 30)
 card:translate(-100, -100, 400)
@@ -78,8 +82,8 @@ outbody:scale(510, 230, 80)
 outbody:translate(-5, -5, -5)
 
 subtract_body = gr.cube('subtract_body')
-subtract_body:scale(500, 220, 70)
-subtract_body:translate(0, -50, 0)
+subtract_body:scale(500, 320, 70)
+subtract_body:translate(0, -60, 0)
 
 shell = gr.construct('shell', 'difference')
 
@@ -87,14 +91,66 @@ shell:add_child(outbody)
 shell:add_child(subtract_body)
 
 subtract_body2 = gr.cube('subtract_body2')
-subtract_body2:scale(250, 220, 10)
--- subtract_body2:translate(0, 0, 0)
+subtract_body2:scale(250, 320, 15)
+subtract_body2:translate(125, -30, 69)
 
 shell2 = gr.construct('shell2', 'difference')
 shell2:add_child(shell)
 shell2:add_child(subtract_body2)
 
 card:add_child(shell2)
+
+
+sidebar1 = gr.cube('sidebar1')
+sidebar1:set_material(silver)
+card:add_child(sidebar1)
+sidebar1:scale(120, 5, 10)
+sidebar1:translate(180, -25, 25)
+
+sidebar2 = gr.cube('sidebar2')
+sidebar2:set_material(silver)
+sidebar2:scale(120, 5, 30)
+sidebar2:rotate('y', -135)
+sidebar2:translate(190, -25, 25)
+
+sidebar_c1 = gr.construct('sidebar_c1', 'difference')
+
+subtract_sidebar21 = gr.cube('subtract_sidebar21')
+subtract_sidebar21:set_material(red)
+subtract_sidebar21:scale(120, 15, 50)
+subtract_sidebar21:translate(80, -30, 70)
+
+sidebar_c1:add_child(sidebar2)
+sidebar_c1:add_child(subtract_sidebar21)
+
+subtract_sidebar22 = gr.cube('subtract_sidebar22')
+subtract_sidebar22:set_material(red)
+subtract_sidebar22:scale(120, 15, 50)
+subtract_sidebar22:translate(80, -30, -25)
+
+sidebar_c2 = gr.construct('sidebar_c2', 'difference')
+
+
+sidebar_c2:add_child(sidebar_c1)
+sidebar_c2:add_child(subtract_sidebar22)
+
+left_sidebar = gr.node('left_sidebar')
+card:add_child(left_sidebar)
+left_sidebar:add_child(sidebar_c2)
+
+right_sidebar = gr.node('right_sidebar')
+card:add_child(right_sidebar)
+right_sidebar:add_child(sidebar_c2)
+right_sidebar:rotate('z', 180)
+right_sidebar:translate(470, -50, 0)
+
+-- sidebar3 = gr.cube('sidebar3')
+-- sidebar3:set_material(silver)
+-- card:add_child(sidebar3)
+-- sidebar3:scale(120, 5, 30)
+-- sidebar3:rotate('y', -45)
+-- sidebar3:translate(300, -25, 25)
+
 
 
 white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})

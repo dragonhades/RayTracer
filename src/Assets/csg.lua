@@ -54,7 +54,7 @@ b5 = gr.cube('b5')
 b5:set_material(mat32)
 scene_root:add_child(b5)
 b5:scale(160, 85, 15)
-b5:translate(-240+500, -140, -320)
+b5:translate(-240+500, -130, -320)
 
 -- s4 = gr.nh_sphere('s4', {-100, 225, -300}, 50)
 -- scene_root:add_child(s4)
