@@ -16,7 +16,6 @@
 
 #include "COMPILE_OPTION.hpp"
 
-
 using namespace glm;
 using namespace std;
 

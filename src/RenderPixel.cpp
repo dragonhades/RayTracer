@@ -8,6 +8,7 @@
 #include <mutex>
 #include <utility>
 
+#include "COMPILE_OPTION.hpp"
 #include "RayTracer.hpp"
 #include "Ray.hpp"
 #include "DEBUG.hpp"

@@ -64,13 +64,13 @@ ground:set_material(dgray)
 ground:scale(1, 1/1000.0, 1)
 ground:translate(-500, -200, -500) ---500, -100, -500
 
-testb = gr.mesh('testb', 'plane.obj')
-scene:add_child(testb)
-testb:set_material(gray)
--- testb:set_texture("Jensen_cut.png")
-testb:scale(1000, 40, 600)
-testb:rotate('x', 90);
-testb:translate(0, -200, -1000)
+-- testb = gr.mesh('testb', 'plane.obj')
+-- scene:add_child(testb)
+-- testb:set_material(gray)
+-- -- testb:set_texture("Jensen_cut.png")
+-- testb:scale(1000, 40, 600)
+-- testb:rotate('x', 90);
+-- testb:translate(0, -100, -1000)
 
 testbl = gr.cube('testbl')
 scene:add_child(testbl)
@@ -119,7 +119,7 @@ testbr:translate(500, -200, -500)
 
 white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_lightlb = gr.light({-100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
-white_light = gr.light({0.0, 500.0, 400}, {0.9, 0.9, 0.9}, {1, 0.0003, 0})
+white_light = gr.light({0.0, 500.0, 400}, {0.9, 0.9, 0.9}, {1, 0.0, 0})
 white_lightrt = gr.light({100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_lightrb = gr.light({100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 orange_light = gr.light({100.0, 200.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
