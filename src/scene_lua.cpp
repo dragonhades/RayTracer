@@ -56,7 +56,6 @@
 #include "Primitive.hpp"
 #include "Material.hpp"
 #include "PhongMaterial.hpp"
-#include "Texture.hpp"
 #include "RayTracer.hpp"
 
 typedef std::map<std::string,Mesh*> MeshMap;

@@ -64,40 +64,19 @@ ground:set_material(dgray)
 ground:scale(1, 1/1000.0, 1)
 ground:translate(-500, -200, -500) ---500, -100, -500
 
--- plane = gr.mesh('plane', 'plane.obj' )
--- scene:add_child(plane)
--- plane:set_material(gray)
--- plane:scale(500, 1, 500)
--- plane:rotate('x', 90)
--- plane:translate(0, 200, -500)
-
-testb = gr.cube('testb')
+testb = gr.mesh('testb', 'plane.obj')
 scene:add_child(testb)
 testb:set_material(gray)
-testb:scale(1000, 500, 1)
-testb:translate(-500, -100, -500)
-
--- planel = gr.mesh('planel', 'plane.obj' )
--- scene:add_child(planel)
--- planel:set_material(red)
--- planel:scale(500, 1, 500)
--- planel:rotate('x', 90)
--- planel:rotate('y', 90)
--- planel:translate(-500, 200, 0)
+testb:set_texture("Jensen_cut.png")
+testb:scale(1000, 40, 600)
+testb:rotate('x', 90);
+testb:translate(0, -200, -1000)
 
 testbl = gr.cube('testbl')
 scene:add_child(testbl)
 testbl:set_material(red)
 testbl:scale(1, 600, 1000)
 testbl:translate(-500, -200, -500)
-
--- planer = gr.mesh('planer', 'plane.obj' )
--- scene:add_child(planer)
--- planer:set_material(blue)
--- planer:scale(500, 1, 500)
--- planer:rotate('x', 90)
--- planer:rotate('y', -90)
--- planer:translate(500, 200, 0)
 
 testbr = gr.cube('testbr')
 scene:add_child(testbr)
@@ -136,9 +115,11 @@ testbr:translate(500, -200, -500)
 -- scene:add_child(steldodec)
 -- steldodec:translate(0, 100, 200)
 
-white_lightl = gr.light({-150.0, 500.0, 400.0}, {0.9, 0.9, 0.9}, {1, 0.005, 0})
+white_lightlt = gr.light({-100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
+white_lightlb = gr.light({-100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 white_light = gr.light({0.0, 500.0, 400}, {0.9, 0.9, 0.9}, {1, 0.0003, 0})
-white_lightr = gr.light({150.0, 500.0, 400.0}, {0.9, 0.9, 0.9}, {1, 0.005, 0})
+white_lightrt = gr.light({100.0, 500.0, 450.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
+white_lightrb = gr.light({100.0, 500.0, 350.0}, {0.9, 0.9, 0.9}, {1, 0.003, 0})
 orange_light = gr.light({100.0, 200.0, 150.0}, {0.7, 0.0, 0.7}, {1, 0, 0})
 
 gr.render(scene, 'photon.png', 
@@ -151,7 +132,7 @@ gr.render(scene, 'photon.png',
 		-- 256, 256,
 	-- 480, 270,
 	-- 640, 360,
-	1280, 720,
-	-- 3840, 2160,
+	-- 1280, 720,
+	3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light, white_lightl, white_lightr})
