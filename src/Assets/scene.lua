@@ -88,6 +88,7 @@ testbr:scale(1, 600, 1000)
 testbr:translate(500, -200, -500)
 
 card = gr.node( 'card' )
+scene:add_child(card)
 
 -- real
 card:rotate('x', -50)
