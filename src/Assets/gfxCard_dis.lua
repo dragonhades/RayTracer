@@ -23,6 +23,13 @@ scene = gr.node( 'scene' )
 scene:translate(0, -300, 0)
 scene:rotate('x', 20)
 
+-- water = gr.mesh('water', 'plane.obj' )
+-- scene:add_child(water)
+-- water:set_material(glass)
+-- water:set_normalmap("water_normal.png")
+-- water:scale(500, 40, 500)
+-- water:translate(0, 50, 0)
+
 ground = gr.nh_box('ground', {0,0,0}, 1000)
 scene:add_child(ground)
 ground:set_material(nvidia_green)
@@ -110,7 +117,6 @@ sidebar1:set_material(silver)
 card:add_child(sidebar1)
 sidebar1:scale(120, 5, 10)
 sidebar1:translate(180, -20, 25)
-sidebar1:translate(0, 100, 0)
 
 sidebar2 = gr.cube('sidebar2')
 sidebar2:set_material(silver)
@@ -141,15 +147,12 @@ sidebar_c2:add_child(subtract_sidebar22)
 left_sidebar = gr.node('left_sidebar')
 card:add_child(left_sidebar)
 left_sidebar:add_child(sidebar_c2)
-left_sidebar:translate(0, -150, 0)
 
 right_sidebar = gr.node('right_sidebar')
 card:add_child(right_sidebar)
 right_sidebar:add_child(sidebar_c2)
 right_sidebar:rotate('z', 180)
 right_sidebar:translate(470, -35, 0)
-right_sidebar:translate(0, -150, 0)
-
 
 fan = gr.node('fan')
 
@@ -197,9 +200,9 @@ gr.render(scene, 'card.png',
 	-- 2160, 2160,
 
 		-- 256, 256,
-	-- 480, 270,
+	480, 270,
 	-- 640, 360,
-	1280, 720,
+	-- 1280, 720,
 	-- 3840, 2160,
 	  {0, -375, 1000}, {0, 0, -1}, {0, 1, 0}, 50,
 	  {0.3, 0.3, 0.3}, {white_light})
