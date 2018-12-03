@@ -14,6 +14,9 @@
 #include "SceneNode.hpp"
 #include "Intersect.hpp"
 
+#include "COMPILE_OPTION.hpp"
+
+
 using namespace glm;
 using namespace std;
 

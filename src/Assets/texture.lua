@@ -11,6 +11,7 @@ yellow = gr.material({1.0, 0.6, 0.1}, {0.5, 0.7, 0.5}, 25, 1)
 mat4 = gr.material({0.7, 0.6, 1.0}, {0.5, 0.4, 0.8}, 25, 1)
 blue = gr.material({0.1, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
 red = gr.material({1.0, 0.1, 0.3}, {0.4, 0.4, 0.4}, 8, 1)
+green2 = gr.material({1.0, 0.3, 0.1}, {0.4, 0.4, 0.4}, 8, 1)
 glass = gr.material({0.0, 0.0, 0.2}, {0.8, 0.8, 0.8}, 50, 0.0)
 
 stone = gr.material({0.8, 0.7, 0.7}, {0.0, 0.0, 0.0}, 0, 1)
@@ -74,13 +75,13 @@ testb:translate(0, -200, -1000)
 
 testbl = gr.cube('testbl')
 scene:add_child(testbl)
-testbl:set_material(red)
+testbl:set_material(green2)
 testbl:scale(1, 600, 1000)
 testbl:translate(-500, -200, -500)
 
 testbr = gr.cube('testbr')
 scene:add_child(testbr)
-testbr:set_material(blue)
+testbr:set_material(green2)
 testbr:scale(1, 600, 1000)
 testbr:translate(500, -200, -500)
 
