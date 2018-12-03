@@ -8,8 +8,11 @@
 #include <mutex>
 
 #include "RayTracer.hpp"
+#include "RenderPixel.hpp"
+#include "PhotonMapping.hpp"
 #include "DEBUG.hpp"
 #include "SceneNode.hpp"
+#include "Intersect.hpp"
 
 using namespace glm;
 using namespace std;
@@ -23,9 +26,15 @@ int progress = 0;
 std::mutex progress_mutx;
 
 SceneNode * root;
-
 vector<vector<vec3>> color_chart;
+vector<vector<vec3>> photonMap_chart;
 
+int obj_w;
+int obj_h;
+int photon_distw;
+int photon_disth;
+int photon_mapw;
+int photon_maph;
 // ---------------------GLOBALS------------------------//
 
 void Render(
@@ -83,7 +92,7 @@ void Render(
 	h++;
 	w++;
 	cout << "Super Sampling Enabled." << endl;
-#endif
+#endif	//SSAA
 
 	for (register uint y = 0; y < h; ++y) {
 		color_chart.emplace_back();
@@ -92,13 +101,61 @@ void Render(
 		} 
 	}
 
-#ifdef MTHREAD
+
 	int num_cores = std::thread::hardware_concurrency();
-	cout <<"Multi-threading..." << endl;
 	cout << "Using " << num_cores << " cores,"<< "\t"
 		<< NUM_THREADS << " threads." <<endl;
 	vector<std::thread> threads(NUM_THREADS);
-#endif
+
+
+#ifdef PHOTON_MAPPING
+
+	mat4 trans;
+	const SceneNode* photon_surface = findNode(root, "ground", trans);
+	DASSERT(photon_surface!=nullptr, "null");
+
+	obj_w = 1000;
+	obj_h = 1000;
+	photon_distw = 600;
+	photon_disth = 600;
+	photon_mapw = 400;
+	photon_maph = 400;
+
+	/*
+		Note: possible hit point range from 0 to photon_dw/photon_dh, 
+				hence plus one is crucial
+	*/
+	for (register uint y = 0; y < photon_maph+1; ++y) {
+		photonMap_chart.emplace_back();
+		for (register uint x = 0; x < photon_mapw+1; ++x){
+			photonMap_chart[y].emplace_back();
+			photonMap_chart[y][x] = vec3(0);
+		}
+	}
+
+	std::cout << "Compute Photon Mapping ..."<<std::endl;
+
+
+	for(int i=0; i<NUM_THREADS; ++i){
+		threads[i] = std::thread(PhotonMap_Thread, trans, lights);
+		if(threads[i].get_id() == std::thread::id()) {
+		     std::cerr << "Abort: Failed to create thread " << i << std::endl;
+			 exit(EXIT_FAILURE);
+		}
+	}
+
+	for(int i=0; i<NUM_THREADS; ++i){
+		threads[i].join();
+	}
+
+	global_x = 0;
+	global_y = 0;
+	progress = 0;
+
+#endif	// PHOTON_MAPPING
+
+	std::cout << std::endl;
+	std::cout << "Rendering ..."<<std::endl;
 
 
 #define loop
@@ -113,7 +170,6 @@ void Render(
 	color_chart[y][x] = color;	// should be redundant
 #else
 
- #ifdef MTHREAD
 	for(int i=0; i<NUM_THREADS; ++i){
 		threads[i] = std::thread(Render_Thread, 
 			 w, h, eye, view, up, fovy, ambient, lights);
@@ -126,25 +182,6 @@ void Render(
 	for(int i=0; i<NUM_THREADS; ++i){
 		threads[i].join();
 	}
-
- #else 
-	cout <<"Single thread." << endl;
-
-	for(register int y=0; y < h; ++y){
-		for(register int x=0; x < w; ++x){
-			
-			color_chart[y][x] = Render_Pixel(x, y, w, h, fovy, ambient, lights);
-
-#ifdef PRINT_PROGRESS
-			progress ++;
-			int new_percent = int(progress / float(w*h) *100.0f);
-			cout << "[               " << new_percent << " %               ]\r";
-#endif
-		}
-	}
-
- #endif
-
 
 #endif
 
@@ -237,6 +274,61 @@ void Render_Thread(
 		
 			progress ++;
 			new_percent = int(progress / float(w*h) *100.0f);		
+
+		// This has potential sychornization problem, but it's okay; we just want to see percentage going up... 
+			cout << "[               " << new_percent << " %               ]\r";
+		}
+		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */	
+	#endif
+
+	} // while true
+}
+
+void PhotonMap_Thread(
+		// Lighting parameters  
+		const glm::mat4 & trans,
+		const std::list<Light *> lights
+) {
+
+	// Work, until no work available
+	while(true){	
+
+		int x, z;
+
+		/* xxxxxxxxxxxxxxxxxxxxx Critical section begin xxxxxxxxxxxxxxxxxxxxx */
+		{
+			// Multi-threading
+			//  Use global x and y to assign task to each thread.
+			//  In every loop, fetch next x, y and move them one pixel to the right
+			//  As result, each thread will always be busy. 
+			std::lock_guard<std::mutex> xy_lck (xy_mutx);
+
+			if(global_y >= photon_disth) return;
+
+			x = global_x;
+			z = global_y;
+			global_x++;
+			if(global_x == photon_distw){
+				global_x = 0;
+				global_y++;
+			}
+			if(global_y >= photon_disth) return;
+		}
+		/* xxxxxxxxxxxxxxxxxxxxx Critical section end xxxxxxxxxxxxxxxxxxxxxxx */
+
+
+		Photon_Mapping(x, z, trans, lights);
+
+		int new_percent;
+		int old_percent;
+
+	#ifdef PRINT_PROGRESS
+		/* xxxxxxxxxxxxxxxxxxxxx Critical section begin xxxxxxxxxxxxxxxxxxxxx */
+		{
+			std::lock_guard<std::mutex> progressBar_lck (progress_mutx);
+		
+			progress ++;
+			new_percent = int(progress / float(photon_distw*photon_disth) *100.0f);		
 
 		// This has potential sychornization problem, but it's okay; we just want to see percentage going up... 
 			cout << "[               " << new_percent << " %               ]\r";

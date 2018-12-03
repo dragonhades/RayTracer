@@ -14,3 +14,8 @@ CastResult intersectNode(const SceneNode* node,
 
 CastResult intersectScene(const Ray & ray, 
 						const SceneNode* target=nullptr);
+
+
+const SceneNode* findNode(const SceneNode* node,
+						  const std::string & name,
+						  glm::mat4 & trans);

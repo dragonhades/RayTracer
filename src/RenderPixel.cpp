@@ -20,6 +20,7 @@
 #include "Mesh.hpp"
 #include "Math.hpp"
 #include "Intersect.hpp"
+#include "PhotonMapping.hpp"
 
 using namespace glm;
 using namespace std;
@@ -87,16 +88,15 @@ glm::vec3 shading(
 	if(result.isHit()){
 
 		GeometryNode* gnode = result.gnode;
-
 		DASSERT(gnode != nullptr, "gnode is Null.");
 
 		/** Phong illumination **/
 		PhongMaterial* phong = (PhongMaterial*) gnode->m_material;
 		vec3 kd;
-		// if(phong->has_normalmap())
-		// 	kd = phong->normal(result.intersection_prime.x, result.intersection_prime.z);
-		// else 
-			kd = phong->m_kd;
+		if(phong->m_type == MaterialType::Texture)
+			kd = phong->get_kd(result.intersection_old.x, result.intersection_old.z);
+		else 
+			kd = phong->get_kd();
 		const vec3 & ks = phong->m_ks;
 		const double & p = phong->m_shininess;
 		const double & opacity = phong->m_opacity;
@@ -109,6 +109,15 @@ glm::vec3 shading(
 		// ambient = Kd * Ia
 		vec3 color = ambient*kd;
 
+#ifdef PHOTON_MAPPING
+		if(gnode->m_name == "ground"){
+			// DPRINTVEC(vec2(result.intersection_old.x, result.intersection_old.z));
+			vec2 coord = world_2_photonMap(result.intersection_old.x, result.intersection_old.z);
+			vec3 c =  photonMap_chart[int(coord[1])][int(coord[0])] + color;
+			// DPRINTVEC(c);
+			return c;
+		}
+#endif
 
 //--------------------------  Lighting  -----------------------------//
 
@@ -140,11 +149,11 @@ _shadow_ray_loop_:
 				// if(mat){
 				// 	if(mat->m_opacity != 0.0) // if object is not transparent;
 				// 		continue;	// discard;
-					// else {
-					// 	shadowRay = Ray(shadowRay_result.intersection, light_dir, ray.inside_shape);
-					// 	shadowRay_result = intersectScene(shadowRay);
-					// 	goto _shadow_ray_loop_;
-					// }
+				// 	else {
+				// 		shadowRay = Ray(shadowRay_result.intersection, light_dir, ray.inside_shape);
+				// 		shadowRay_result = intersectScene(shadowRay);
+				// 		goto _shadow_ray_loop_;
+				// 	}
 				// } else {
 					continue;
 				// }
@@ -192,7 +201,12 @@ _shadow_ray_loop_:
 				}
 				// DPRINTVEC(n);
 				const vec3 & refract_dir = glm::normalize(get_refract(n, normalize(ray.dir), startRefractiveIndex, endRefractiveIndex));
-				if(refract_dir == vec3(0)) return color;
+				
+				// Total internal reflection
+				//  But we've done it already
+				if(refract_dir == vec3(0)) return color; 
+				
+
 				const Ray & ray_transmition = Ray(intersection, refract_dir, !ray.inside_shape);
 
 				vec3 refract_color;

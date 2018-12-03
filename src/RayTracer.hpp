@@ -9,13 +9,13 @@
 #include "Image.hpp"
 
 #define NUM_THREADS 32
-#define MTHREAD
 #define PRINT_PROGRESS
 
 #define SSAA
 #define REFLECTION
 #define REFRACTION
-#define MAX_SHADE_RECURSION 6
+// #define PHOTON_MAPPING
+#define MAX_SHADE_RECURSION 3
 
 // #define DRAW_BBOX
 #define LIGHT_TURN_ON
@@ -24,7 +24,16 @@ class Ray;
 class CastResult;
 
 extern std::vector<std::vector<glm::vec3>> color_chart;
+extern std::vector<std::vector<glm::vec3>> photonMap_chart;
+
 extern SceneNode * root;
+
+extern int obj_w;
+extern int obj_h;
+extern int photon_distw;
+extern int photon_disth;
+extern int photon_mapw;
+extern int photon_maph;
 
 void Render(
 		// What to render
@@ -59,18 +68,10 @@ void Render_Thread(
 		const std::list<Light *> lights
 );
 
-glm::vec3 Render_Pixel(
-		int x, 
-		int y, 
-		int w, 
-		int h,
-
-		// Viewing parameters
-		double fovy,
-
+void PhotonMap_Thread(
 		// Lighting parameters  
-		const glm::vec3 & ambient,
-		const std::list<Light *> & lights
+		const glm::mat4 & trans,
+		const std::list<Light *> lights
 );
 
 glm::vec3 shading(
@@ -88,8 +89,4 @@ glm::vec3 shading(
 		// Lighting parameters  
 		const glm::vec3 & ambient,
 		const std::list<Light *> & lights
-);
-
-CastResult intersectScene(const SceneNode* node, 
-						  const Ray & ray
 );
