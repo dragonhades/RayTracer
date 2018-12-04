@@ -81,21 +81,15 @@ Recursive reflection with maximum of 6 times
 
 _Reflection Only_:
 
-![](demo/reflection_only_demo_1.png)
-
 ![](demo/reflection_only_demo_2.png)
 
 ### Refraction
 
 _Refraction Only_:
 
-![](demo/refraction_only_demo_1.png)
-
 ![](demo/refraction_only_demo_2.png)
 
 _Both Reflection and Refraction_:
-
-![](demo/refboth_demo_1.png)
 
 ![](demo/refboth_demo_2.png)
 
